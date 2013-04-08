@@ -1,0 +1,8 @@
+[webserver]
+ns4007780.ip-192-95-30.net ansible_ssh_user=root
+
+[dbserver]
+ns4007780.ip-192-95-30.net ansible_ssh_user=root
+
+[appserver]
+ns4007780.ip-192-95-30.net ansible_ssh_user=root
