@@ -1,11 +1,20 @@
-- name: Setup the nginx/redis PPA's
+- name: Setup the redis PPA
   apt_repository: repo=ppa:rwky/redis
 
-- name: Add Postgres separately since we need full-name
+- name: Setup the Postgres PPA
   apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main'
 
-- name: Install Postgres/redis/mysql
+- name: Install Postgres/redis
   apt: pkg=$item state=latest update_cache=yes
   with_items:
     - postgresql
     - redis-server
+
+- name: Copy Redis apparmor profile over
+  copy: src=roles/dbserver/files/usr.bin.redis-server dest=/etc/apparmor.d/usr.bin.redis-server owner=root group=root mode=0644
+
+- name: Enable Redis apparmor profile
+  command: /usr/sbin/aa-enforce /usr/bin/redis-server
+  notify:
+    - reload apparmor
+    - restart redis

@@ -1,0 +1,12 @@
+#include <tunables/global>
+
+/usr/bin/redis-server {
+  #include <abstractions/apache2-common>
+  #include <abstractions/base>
+
+  /run/redis/* rw,
+  /etc/redis/* r,
+  /var/lib/redis/* rw,
+  /var/log/redis/* rw,
+  /var/run/redis/* rw,
+}

@@ -34,6 +34,10 @@
     - apparmor-utils
     - ufw
 
+- name: Start apparmor
+  service: name=apparmor state=started enabled=true
+  tags: security
+
 - name: Enable OpenSSH on ufw
   command: /usr/sbin/ufw allow OpenSSH
   tags: security
