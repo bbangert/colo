@@ -8,5 +8,6 @@
   - include: roles/webserver/tasks/main.yml
   - include: roles/dbserver/tasks/main.yml
   handlers:
+  - include: roles/common/handlers/main.yml
   - include: roles/dbserver/handlers/main.yml
   - include: roles/webserver/handlers/main.yml
