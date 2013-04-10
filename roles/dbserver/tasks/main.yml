@@ -20,9 +20,6 @@
     - mysql
     - postgresql
 
-- name: Start/Enable Redis
-  service: name=redis-server enabled=true
-
 - name: Copy Redis apparmor profile over
   copy: src=roles/dbserver/files/usr.bin.redis-server dest=/etc/apparmor.d/usr.bin.redis-server owner=root group=root mode=0644
 
@@ -31,3 +28,6 @@
   notify:
     - reload apparmor
     - restart redis
+
+- name: Start/Enable Redis
+  service: name=redis-server enabled=true

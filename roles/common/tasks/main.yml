@@ -55,3 +55,6 @@
 - name: Update sshd config to use key auth only
   copy: src=roles/common/files/sshd_config dest=/etc/ssh/sshd_config owner=root group=root mode=0644
   notify: restart sshd
+
+- name: Setup unattended security updates
+  copy: src=roles/common/files/apt.10periodic dest=/etc/apt/apt.conf.d/10periodic owner=root group=root mode=0644

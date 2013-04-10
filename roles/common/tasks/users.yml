@@ -17,3 +17,8 @@
   authorized_key: user=${item.user} key="${item.key}"
   tags: users
   with_items: $admins
+
+- name: add admin keys to root
+  authorized_key: user=root key="${item.key}"
+  tags: users
+  with_items: $admins
