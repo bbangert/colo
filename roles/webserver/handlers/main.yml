@@ -1,4 +1,4 @@
 ---
 
-- name: reread supervisor
-  command: /usr/bin/supervisorctl reread
+- name: restart php
+  command: /usr/bin/supervisorctl restart php5-cgi

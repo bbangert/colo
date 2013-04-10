@@ -9,10 +9,23 @@
     - php5-common
     - php5-mysql
 
-- name: setup supervisor for php-cgi
-  copy: src=roles/webserver/files/php5.cgi.supervisor dest=/etc/supervisor/conf.d/php.conf owner=root group=root mode=0644
-  notify:
-    - reread supervisor
+- name: Copy php-cgi apparmor profile over
+  copy: src=roles/webserver/files/usr.bin.php5-cgi dest=/etc/apparmor.d/usr.bin.php5-cgi owner=root group=root mode=0644
+  tags: security
 
-- name: add php5-cgi to supervisor
+- name: Setup supervisor for php-cgi
+  copy: src=roles/webserver/files/php5.cgi.supervisor dest=/etc/supervisor/conf.d/php.conf owner=root group=root mode=0644
+  tags: supervisor
+  notify: reread supervisor
+
+- name: Add php5-cgi to supervisor
   command: /usr/bin/supervisorctl add php5-cgi
+  tags: supervisor
+  when_string: '"php5-cgi" not in $supervisorstatus'
+
+- name: Enable php5 apparmor profile
+  command: /usr/sbin/aa-enforce /usr/bin/php5-cgi
+  tags: security
+  notify:
+    - restart apparmor
+    - restart php

@@ -1,0 +1,12 @@
+#include <tunables/global>
+
+/usr/bin/php5-cgi {
+  #include <abstractions/apache2-common>
+  #include <abstractions/base>
+  #include <abstractions/user-tmp>
+
+
+  /home/*/www/** r,
+  /usr/bin/php5-cgi mr,
+
+}
