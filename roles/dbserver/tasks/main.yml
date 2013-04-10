@@ -26,7 +26,7 @@
 - name: Enable Redis apparmor profile
   command: /usr/sbin/aa-enforce /usr/bin/redis-server
   notify:
-    - reload apparmor
+    - restart apparmor
     - restart redis
 
 - name: Start/Enable Redis

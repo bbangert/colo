@@ -2,8 +2,5 @@
 # Handler to handle common notifications. Handlers are called by other plays.
 # See http://ansible.cc/docs/playbooks.html for more information about handlers.
 
-- name: reload apparmor
-  service: name=apparmor state=restarted
-
 - name: restart redis
   service: name=redis-server state=restarted
