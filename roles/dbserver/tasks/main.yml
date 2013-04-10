@@ -4,11 +4,24 @@
 - name: Setup the Postgres PPA
   apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main'
 
-- name: Install Postgres/redis
+- name: Setup the MariaDB 10 PPA
+  apt_repository: repo='deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu precise main'
+
+- name: Install Postgresql/Redis/MariaDB
   apt: pkg=$item state=latest update_cache=yes
   with_items:
     - postgresql
     - redis-server
+    - mariadb-server
+
+- name: Start Databases
+  service: name=$item state=started enabled=true
+  with_items:
+    - mysql
+    - postgresql
+
+- name: Start/Enable Redis
+  service: name=redis-server enabled=true
 
 - name: Copy Redis apparmor profile over
   copy: src=roles/dbserver/files/usr.bin.redis-server dest=/etc/apparmor.d/usr.bin.redis-server owner=root group=root mode=0644

@@ -24,6 +24,7 @@
     - traceroute
     - htop
     - bind9
+    - python-software-properties
 
 - name: Install security packages
   apt: pkg=$item state=latest update_cache=yes
@@ -33,6 +34,7 @@
     - apparmor-profiles
     - apparmor-utils
     - ufw
+    - unattended-upgrades
 
 - name: Start apparmor
   service: name=apparmor state=started enabled=true
