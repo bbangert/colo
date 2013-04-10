@@ -6,3 +6,5 @@
 
 - name: Start nginx
   service: name=nginx state=started enabled=true
+
+- include: roles/webserver/tasks/php.yml

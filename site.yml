@@ -9,3 +9,4 @@
   - include: roles/dbserver/tasks/main.yml
   handlers:
   - include: roles/dbserver/handlers/main.yml
+  - include: roles/webserver/handlers/main.yml

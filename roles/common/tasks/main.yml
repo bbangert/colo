@@ -24,6 +24,7 @@
     - traceroute
     - htop
     - bind9
+    - supervisor
     - python-software-properties
 
 - name: Install security packages
