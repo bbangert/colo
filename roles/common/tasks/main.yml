@@ -26,6 +26,12 @@
     - bind9
     - supervisor
     - python-software-properties
+  tags: supervisor
+
+- name: Check supervisor status
+  command: /usr/bin/supervisorctl status
+  register: supervisorstatus
+  tags: supervisor
 
 - name: Install security packages
   apt: pkg=$item state=latest update_cache=yes
