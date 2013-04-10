@@ -30,3 +30,13 @@ The Makefile does most of the dirty work, so first check out this repo.
             "changed": false,
             "ping": "pong"
         }
+
+Provisioning
+============
+
+Assuming the server in the host is going to be used, provisioning the
+server can be done with the command:
+
+.. code-block:: bash
+
+    $ ansible-playbook -i hosts site.yml

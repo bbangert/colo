@@ -1,0 +1,19 @@
+---
+
+- name: add sudo
+  apt: package=sudo
+  tags: users
+
+- name: add the sysadmin group
+  group: name=sysadmin
+  tags: users
+
+- name: add admin accounts
+  user: name=${item.user} group=sysadmin groups=sudo
+  tags: users
+  with_items: $admins
+
+- name: add admin keys
+  authorized_key: user=${item.user} key="${item.key}"
+  tags: users
+  with_items: $admins

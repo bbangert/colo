@@ -1,0 +1,11 @@
+- name: Setup the nginx/redis PPA's
+  apt_repository: repo=ppa:rwky/redis
+
+- name: Add Postgres separately since we need full-name
+  apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main'
+
+- name: Install Postgres/redis/mysql
+  apt: pkg=$item state=latest update_cache=yes
+  with_items:
+    - postgresql
+    - redis-server

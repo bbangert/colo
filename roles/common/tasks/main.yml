@@ -1,0 +1,51 @@
+---
+
+- name: Install ntp
+  apt: pkg=ntp
+  tags: ntp
+
+- name: Configure ntp file
+  template: src=roles/common/templates/ntp.conf.j2 dest=/etc/ntp.conf
+  tags: ntp
+  notify: restart ntp
+
+- name: Start the ntp service
+  service: name=ntp state=started enabled=true
+  tags: ntp
+
+- include: roles/common/tasks/users.yml
+
+- name: Install the unix basics
+  tags: repos
+  apt: pkg=$item state=latest update_cache=yes
+  with_items:
+    - screen
+    - vim
+    - traceroute
+    - htop
+    - bind9
+
+- name: Install security packages
+  apt: pkg=$item state=latest update_cache=yes
+  tags: security
+  with_items:
+    - apparmor
+    - apparmor-profiles
+    - apparmor-utils
+    - ufw
+
+- name: Enable OpenSSH on ufw
+  command: /usr/sbin/ufw allow OpenSSH
+  tags: security
+
+- name: Enable Bind9 on ufw
+  command: /usr/sbin/ufw allow Bind9
+  tags: security
+
+- name: Enable ufw
+  command: /usr/sbin/ufw --force enable
+  tags: security
+
+- name: Update sshd config to use key auth only
+  copy: src=roles/common/files/sshd_config dest=/etc/ssh/sshd_config owner=root group=root mode=0644
+  notify: restart sshd
