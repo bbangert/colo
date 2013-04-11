@@ -7,4 +7,7 @@
 - name: Start nginx
   service: name=nginx state=started enabled=true
 
+- name: Ensure the /var/www dir exists
+  file: path=/var/www state=directory owner=www-data group=www-data mode=0644
+
 - include: roles/webserver/tasks/php.yml

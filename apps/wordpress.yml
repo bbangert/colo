@@ -1,0 +1,26 @@
+---
+# A wordpress based site
+
+- name: Ensure python-mysql is installed
+  apt: pkg="python-mysqldb" state=latest
+
+- name: Create www directory for $domain
+  file: path=/var/www/$domain owner=www-data group=www-data state=directory
+
+- name: Create the database for $domain
+  mysql_db: db=${database.name}
+
+- name: Create the database user for $domain
+  mysql_user: name=${database.user} password=${database.password} priv=${database.name}.*:ALL
+
+- name: Check for existing wordpress dir
+  shell: "ls /var/www/$domain/wordpress"
+  register: lsresults
+
+- name: Download the latest Wordpress
+  get_url: url=http://wordpress.org/latest.tar.gz dest=/var/www/$domain
+  when_string: '"No such file or directory" in $lsresults'
+
+- name: Decompress Wordpress
+  shell: "cd /var/www/$domain && tar xzvf latest.tar.gz && rm latest.tar.gz"
+  when_string: '"No such file or directory" in $lsresults'

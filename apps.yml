@@ -1,0 +1,18 @@
+---
+# This Playbook deploys the applications to the site
+
+- hosts: server
+  user: root
+  tasks:
+  # Sins Against Cinema
+  - include: apps/wordpress.yml
+    vars:
+        domain: sinsagainstcinema.com
+        database:
+            name: sins
+            user: sins
+            pasword: "PASSWORDHERE"
+  handlers:
+  - include: roles/common/handlers/main.yml
+  - include: roles/dbserver/handlers/main.yml
+  - include: roles/webserver/handlers/main.yml
