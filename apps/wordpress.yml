@@ -12,7 +12,7 @@
 
 - name: Create the database user for $domain
   mysql_user: name="${database.user}" password="$item" priv=${database.name}.*:ALL
-  with_password: credentials/${inventory_hostname}/${domain}/db_password
+  with_password: credentials/${inventory_hostname}/${domain}/db_password length=20
 
 - name: Check for existing wordpress dir
   shell: "ls /var/www/$domain/wordpress"

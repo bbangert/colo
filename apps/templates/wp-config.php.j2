@@ -22,7 +22,7 @@ define('DB_NAME', '{{ database.name }}');
 define('DB_USER', '{{ database.user }}');
 
 /** MySQL database password */
-define('DB_PASSWORD', '{{ lookup('password', 'credentials/' + inventory_hostname + '/' + domain + '/db_password') }}');
+define('DB_PASSWORD', '$PASSWORD(credentials/${inventory_hostname}/${domain}/db_password length=20)');
 
 /** MySQL hostname */
 define('DB_HOST', 'localhost');
