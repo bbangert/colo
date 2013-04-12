@@ -7,7 +7,7 @@
     - php5-cgi
     - php5-cli
     - php5-common
-    - php5-mysql
+    - php5-mysqlnd
 
 - name: Copy php-cgi apparmor profile over
   copy: src=usr.bin.php5-cgi dest=/etc/apparmor.d/usr.bin.php5-cgi owner=root group=root mode=0644

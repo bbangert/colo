@@ -5,14 +5,14 @@
   apt: pkg="python-mysqldb" state=latest
 
 - name: Create www directory for $domain
-  file: path=/var/www/$domain owner=www-data group=www-data state=directory
+  file: path=/var/www/$domain owner=www-data group=www-data state=directory mode=0755
 
 - name: Create the database for $domain
   mysql_db: db=${database.name}
 
 - name: Create the database user for $domain
-  mysql_user: name=${database.user} password=$item priv=${database.name}.*:ALL
-  with_password: credentials/${inventory_hostname}/${domain}/password
+  mysql_user: name="${database.user}" password="$item" priv=${database.name}.*:ALL
+  with_password: credentials/${inventory_hostname}/${domain}/db_password
 
 - name: Check for existing wordpress dir
   shell: "ls /var/www/$domain/wordpress"

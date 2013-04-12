@@ -11,7 +11,7 @@
   service: name=nginx state=started enabled=true
 
 - name: Ensure the /var/www dir exists
-  file: path=/var/www state=directory owner=www-data group=www-data mode=0644
+  file: path=/var/www state=directory owner=www-data group=www-data mode=0755
 
 - name: Check for open port 80
   command: /usr/sbin/ufw status verbose
