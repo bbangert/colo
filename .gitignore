@@ -1,3 +1,4 @@
 pythonVE/
 virtualenv/
+credentials/
 *.pyc
