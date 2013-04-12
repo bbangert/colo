@@ -11,7 +11,7 @@
         database:
             name: sins
             user: sins
-  - include: roles/nameserver/setupdomain.yml
+  - include: roles/nameserver/tasks/setupdomain.yml
     vars:
         domain_name: sinsagainstcinema.com
         domain_ttl: 3h
