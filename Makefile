@@ -1,6 +1,7 @@
 HERE = $(shell pwd)
 BIN = $(HERE)/pythonVE/bin
 PIP = $(BIN)/pip
+PYTHON = $(HERE)/pythonVE/bin/python
 
 .PHONY: all build
 
@@ -16,4 +17,5 @@ $(HERE)/pythonVE: $(HERE)/virtualenv
 	python virtualenv.py ../pythonVE
 
 build: $(HERE)/pythonVE
-	$(PIP) install ansible
+	git submodule update --init --recursive
+	cd ansible && $(PYTHON) setup.py install
