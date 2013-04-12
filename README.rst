@@ -25,7 +25,7 @@ The Makefile does most of the dirty work, so first check out this repo.
 
     .. code-block:: bash
 
-        $ ansible all -i hosts -m ping
+        $ ansible all -i hosts -m ping -u root
         HOST | success >> {
             "changed": false,
             "ping": "pong"
@@ -40,3 +40,13 @@ server can be done with the command:
 .. code-block:: bash
 
     $ ansible-playbook -i hosts site.yml
+
+To setup the applications, use `apps.yml` instead of `site.yml`.
+
+Testing Locally
+===============
+
+This process can be tested against a local host VM, which should be
+running Ubuntu 12.04 LTS. Copy the `hosts` file to `local_hosts`, edit
+it to use the local VM IP, then run the command above with `-i
+local_hosts`.
