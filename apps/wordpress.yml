@@ -11,7 +11,8 @@
   mysql_db: db=${database.name}
 
 - name: Create the database user for $domain
-  mysql_user: name=${database.user} password=${database.password} priv=${database.name}.*:ALL
+  mysql_user: name=${database.user} password=$item priv=${database.name}.*:ALL
+  with_password: credentials/${inventory_hostname}/${domain}/password
 
 - name: Check for existing wordpress dir
   shell: "ls /var/www/$domain/wordpress"
@@ -24,3 +25,13 @@
 - name: Decompress Wordpress
   shell: "cd /var/www/$domain && tar xzvf latest.tar.gz && rm latest.tar.gz"
   when_string: '"No such file or directory" in $lsresults'
+
+- name: Setup wordpress config for $domain
+  template: src=apps/templates/wp-config.php.j2 dest=/var/www/$domain/wordpress/wp-config.php owner=www-data group=www-data mode=0644
+  with_password: credentials/${inventory_hostname}/${domain}/password
+
+- name: Setup nginx configuration for $domain
+  template: src=apps/templates/nginx-wp.j2 dest=/etc/nginx/sites-available/$domain owner=root group=root mode=0644
+
+- name: Link nginx config to sites-enabled for $domain
+  file: path=/etc/nginx/sites-enabled/$domain src=/etc/nginx/sites-available/$domain state=link

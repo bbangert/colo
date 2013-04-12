@@ -11,7 +11,6 @@
         database:
             name: sins
             user: sins
-            pasword: "PASSWORDHERE"
   handlers:
   - include: roles/common/handlers/main.yml
   - include: roles/dbserver/handlers/main.yml

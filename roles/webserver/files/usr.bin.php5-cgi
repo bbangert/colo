@@ -6,7 +6,8 @@
   #include <abstractions/user-tmp>
 
 
-  /home/*/www/** r,
+  /home/*/www/** rw,
   /usr/bin/php5-cgi mr,
-
+  /var/www/** r,
+  /var/www/*/wordpress/** mrw,
 }
