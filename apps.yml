@@ -11,7 +11,7 @@
         database:
             name: sins
             user: sins
-  - include: apps/bind.yml
+  - include: roles/nameserver/setupdomain.yml
     vars:
         domain_name: sinsagainstcinema.com
         domain_ttl: 3h
@@ -22,3 +22,4 @@
   - include: roles/common/handlers/main.yml
   - include: roles/dbserver/handlers/main.yml
   - include: roles/webserver/handlers/main.yml
+  - include: roles/nameserver/handlers/main.yml
