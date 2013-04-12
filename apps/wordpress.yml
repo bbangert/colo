@@ -35,3 +35,5 @@
 
 - name: Link nginx config to sites-enabled for $domain
   file: path=/etc/nginx/sites-enabled/$domain src=/etc/nginx/sites-available/$domain state=link
+  notify:
+    - restart nginx
