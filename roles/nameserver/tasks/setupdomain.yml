@@ -18,16 +18,12 @@
 #          - www CNAME groovie.org.
 #          - jenkins CNAME groovie.org.
 
-- name: Ensure zones dir exists
-  tags: bind
-  file: path=/etc/bind/zones state=directory owner=root group=bind
-
 - name: Create zone record for assembly
   tags: bind
-  template: src=apps/templates/named.local.frag.j2 dest=/root/zonefragments/${domain_name}
+  template: src=named.local.frag.j2 dest=/root/zonefragments/${domain_name}
   notify: rebuild zones
 
 - name: Setup record for $domain_name
   tags: bind
-  template: src=apps/templates/db.named.j2 dest=/etc/bind/zones/db.${domain_name} owner=root group=bind mode=0644
+  template: src=db.named.j2 dest=/etc/bind/zones/db.${domain_name} owner=root group=bind mode=0644
   notify: restart bind

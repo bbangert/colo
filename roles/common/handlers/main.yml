@@ -8,18 +8,8 @@
 - name: restart sshd
   service: name=ssh state=restarted
 
-- name: restart bind
-  service: name=bind9 state=restarted
-
 - name: restart apparmor
   service: name=apparmor state=restarted
 
 - name: reread supervisor
   command: /usr/bin/supervisorctl reread
-
-- name: rebuild zones
-  assemble: src=/root/zonefragments dest=/etc/bind/named.conf.local
-  notify: fixup zones
-
-- name: fixup zones
-  file: path=/etc/bind/named.conf.local owner=root group=bind mode=0644
