@@ -20,15 +20,14 @@
 
 - name: Download the latest Wordpress
   get_url: url=http://wordpress.org/latest.tar.gz dest=/var/www/$domain
-  when_string: '"No such file or directory" in $lsresults'
+  when: "'No such file or directory' in lsresults"
 
 - name: Decompress Wordpress
   shell: "cd /var/www/$domain && tar xzvf latest.tar.gz && rm latest.tar.gz"
-  when_string: '"No such file or directory" in $lsresults'
+  when: "'No such file or directory' in lsresults"
 
 - name: Setup wordpress config for $domain
   template: src=apps/templates/wp-config.php.j2 dest=/var/www/$domain/wordpress/wp-config.php owner=www-data group=www-data mode=0644
-  with_password: credentials/${inventory_hostname}/${domain}/password
 
 - name: Setup nginx configuration for $domain
   template: src=apps/templates/nginx-wp.j2 dest=/etc/nginx/sites-available/$domain owner=root group=root mode=0644
