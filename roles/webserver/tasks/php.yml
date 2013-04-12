@@ -24,7 +24,7 @@
 - name: Add php5-cgi to supervisor
   command: /usr/bin/supervisorctl add php5-cgi
   tags: supervisor
-  when_string: '"php5-cgi" not in $supervisorstatus'
+  when: '"php5-cgi" not in supervisorstatus'
 
 - name: Enable php5 apparmor profile
   command: /usr/sbin/aa-enforce /usr/bin/php5-cgi
