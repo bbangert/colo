@@ -5,7 +5,7 @@
   tags: ntp
 
 - name: Configure ntp file
-  template: src=roles/common/templates/ntp.conf.j2 dest=/etc/ntp.conf
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf
   tags: ntp
   notify: restart ntp
 
@@ -27,6 +27,18 @@
     - supervisor
     - python-software-properties
   tags: supervisor
+
+- name: Disable open bind recursion so we don't get used for DNS amplification attacks
+  copy: src=named.conf.options dest=/etc/bind/named.conf.options owner=root group=bind mode=0644
+  tags: bind
+
+- name: Setup zone fragments for file assembly
+  file: path=/root/zonefragments state=directory
+  tags: bind
+
+- name: Create zone base header
+  copy: src=zoneheader dest=/root/zonefragments/00header
+  tags: bind
 
 - name: Check supervisor status
   command: /usr/bin/supervisorctl status

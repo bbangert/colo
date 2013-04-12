@@ -11,6 +11,13 @@
         database:
             name: sins
             user: sins
+  - include: apps/bind.yml
+    vars:
+        domain_name: sinsagainstcinema.com
+        domain_ttl: 3h
+        admin_email: robottaway.gmail.com
+        include_google_apps: false
+
   handlers:
   - include: roles/common/handlers/main.yml
   - include: roles/dbserver/handlers/main.yml
