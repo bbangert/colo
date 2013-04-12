@@ -12,7 +12,7 @@
 #    vars:
 #      domain_name: groovie.org
 #      domain_ttl: 3h
-#      admin_email: ben@groovie.org
+#      admin_email: ben.groovie.org
 #      include_google_apps: false
 #      records:
 #          - www CNAME groovie.org.
