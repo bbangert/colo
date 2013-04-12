@@ -13,7 +13,7 @@
   service: name=ntp state=started enabled=true
   tags: ntp
 
-- include: roles/common/tasks/users.yml
+- include: users.yml
 
 - name: Install the unix basics
   tags: repos
@@ -73,8 +73,8 @@
   tags: security
 
 - name: Update sshd config to use key auth only
-  copy: src=roles/common/files/sshd_config dest=/etc/ssh/sshd_config owner=root group=root mode=0644
+  copy: src=sshd_config dest=/etc/ssh/sshd_config owner=root group=root mode=0644
   notify: restart sshd
 
 - name: Setup unattended security updates
-  copy: src=roles/common/files/apt.10periodic dest=/etc/apt/apt.conf.d/10periodic owner=root group=root mode=0644
+  copy: src=apt.10periodic dest=/etc/apt/apt.conf.d/10periodic owner=root group=root mode=0644

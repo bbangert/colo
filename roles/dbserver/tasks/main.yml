@@ -21,7 +21,7 @@
     - postgresql
 
 - name: Copy Redis apparmor profile over
-  copy: src=roles/dbserver/files/usr.bin.redis-server dest=/etc/apparmor.d/usr.bin.redis-server owner=root group=root mode=0644
+  copy: src=usr.bin.redis-server dest=/etc/apparmor.d/usr.bin.redis-server owner=root group=root mode=0644
   tags: security
 
 - name: Enable Redis apparmor profile

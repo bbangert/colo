@@ -10,14 +10,14 @@
     - php5-mysql
 
 - name: Copy php-cgi apparmor profile over
-  copy: src=roles/webserver/files/usr.bin.php5-cgi dest=/etc/apparmor.d/usr.bin.php5-cgi owner=root group=root mode=0644
+  copy: src=usr.bin.php5-cgi dest=/etc/apparmor.d/usr.bin.php5-cgi owner=root group=root mode=0644
   tags: security
   notify:
     - restart apparmor
     - restart php
 
 - name: Setup supervisor for php-cgi
-  copy: src=roles/webserver/files/php5.cgi.supervisor dest=/etc/supervisor/conf.d/php.conf owner=root group=root mode=0644
+  copy: src=php5.cgi.supervisor dest=/etc/supervisor/conf.d/php.conf owner=root group=root mode=0644
   tags: supervisor
   notify: reread supervisor
 
