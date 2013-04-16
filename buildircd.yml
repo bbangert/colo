@@ -1,0 +1,35 @@
+---
+
+- name: Install dependencies to build ircd
+  apt: pkg=$item state=latest
+  with_items:
+    - openssl
+    - "libssl-dev"
+    - fakeroot
+
+- name: Create src dir for ircd-hybrid
+  file: path=/usr/local/src/ircd state=directory
+
+- name: Get source for ircd and expand
+  shell: cd /usr/local/src/ircd && apt-get source ircd-hybrid
+
+- name: Get the name of the directory with the trailing slash
+  shell: 'ls -p /usr/local/src/ircd | grep "ircd.*/"'
+  register: ircdname
+
+- name: Edit build file to add OpenSSL support
+  lineinfile: >
+    regexp="^USE_OPENSSL = 1"
+    insertafter="^MAXCLIENTS"
+    dest="/usr/local/src/ircd/${ircdname.stdout}/debian/rules"
+    state=present
+    line="USE_OPENSSL = 1"
+
+- name: Build the ircd package
+  shell: "cd /usr/local/src/ircd/${ircdname.stdout} && dpkg-buildpackage -rfakeroot -uc -b"
+
+- name: Install the build package
+  shell: "cd /usr/local/src/ircd && dpkg -i ircd-hybrid_*.deb"
+
+- name: Clean up the build dir
+  shell: "cd /usr/local/src && rm -rf ircd"

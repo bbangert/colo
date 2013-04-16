@@ -1,0 +1,70 @@
+---
+# This Playbook deploys the applications to the site
+
+- hosts: server
+  user: root
+  tasks:
+
+  # IRC packages and server setup
+  - name: Install IRC client
+    apt: pkg=$item state=latest
+    tags: irc
+    with_items:
+      - irssi
+      - irssi-plugin-otr
+      - irssi-scripts
+
+  # Check to see if we need to build ircd and install it
+  - name: Check for ircd installed
+    shell: "apt-cache show ircd-hybrid | grep Status"
+    register: ircdcache
+
+  - include: buildircd.yml
+    when: "'installed' not in ircdcache.stdout"
+
+  - name: Enable IRC server
+    tags: irc
+    service: name="ircd-hybrid" enabled=true
+
+# - name: Copy key over
+#   tags: irc
+#   copy: src=credentials/${inventory_hostname}/ircd/groovie.org.key dest=/etc/ircd-hybrid/key/ircd.key owner=irc group=irc mode=0600
+
+# - name: Copy pem cert over
+#   tags: irc
+#   copy: src=credentials/${inventory_hostname}/ircd/groovie.org.pem dest=/etc/ircd-hybrid/key/ircd.pem owner=root group=root mode=0644
+
+  - name: Copy ircd apparmor profile over
+    copy: src=apps/files/usr.sbin.ircd-hybrid dest=/etc/apparmor.d/usr.sbin.ircd-hybrid owner=root group=root mode=0644
+    tags:
+        - irc
+        - security
+    notify:
+        - enforce ircd
+        - restart ircd
+
+  - name: Copy ircd files over
+    tags: irc
+    template: >
+         src="apps/templates/ircd/${item}.j2"
+         dest="/etc/ircd-hybrid/${item}"
+         owner=irc
+         group=irc
+         mode=0770
+    with_items:
+         - ircd.conf
+         - ircd.motd
+    notify: restart ircd
+
+  handlers:
+  - name: restart ircd
+    service: name="ircd-hybrid" state=restarted
+
+  - name: enforce ircd
+    command: /usr/sbin/aa-enforce /usr/sbin/ircd-hybrid
+    notify: restart apparmor
+
+  - include: roles/common/handlers/main.yml
+  - include: roles/dbserver/handlers/main.yml
+  - include: roles/webserver/handlers/main.yml
+  - include: roles/nameserver/handlers/main.yml
