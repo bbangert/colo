@@ -88,9 +88,9 @@
     register: ircdufw
 
   - name: Enable ircd port if needed
-    shell: ufw allow 6670/tcp
+    shell: ufw allow 6697/tcp
     tags: security
-    when: "'6670/tcp' not in ircdufw.stdout"
+    when: "'6697/tcp' not in ircdufw.stdout"
 
   handlers:
   - name: restart ircd
