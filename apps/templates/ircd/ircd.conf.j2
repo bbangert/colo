@@ -180,7 +180,7 @@ auth {
 	no_tilde = yes;
 
 	/* class: the class the user is placed in */
-	class = "opers";
+	class = "users";
 };
 
 #auth {
@@ -229,7 +229,7 @@ operator {
 	 *
 	 * MD5 is supported. If you want to use it, use mkpasswd -Hmd5.
 	 */
-	password = "rCucnY4Fst/Z6";
+    password = "$PASSWORD(credentials/${inventory_hostname}/ircd/oper_pass)";
 
 	/* class: the class the oper joins when they successfully /oper */
 	class = "opers";
@@ -286,13 +286,13 @@ shared {
 	/* name: the server the user must be on to set klines.  If this is not
 	 * specified, the user will be allowed to kline from all servers.
 	 */
-	name = "hybrid7.debian.local";
+	# name = "hybrid7.debian.local";
 
 	/* user: the user@host mask that is allowed to set klines.  If this is
 	 * not specified, all users on the server above will be allowed to set
 	 * a remote kline.
 	 */
-	user = "root@localhost";
+	user = "bbangert@localhost";
 };
 
 /* kill {}: users that are not allowed to connect (OLD K:)
@@ -324,6 +324,12 @@ resv {
 	/* resv: the nicks and channels users may not join/use */
 	nick = "nickserv";
 	nick = "chanserv";
+    nick = "memoserv";
+    nick = "seenserv";
+    nick = "statserv";
+    nick = "operserv";
+    nick = "global";
+    nick = "helpserv";
 	channel = "#services";
 
 	/* resv: wildcard masks are also supported in nicks only */
