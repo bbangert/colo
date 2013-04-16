@@ -1,0 +1,16 @@
+# Author: Felix Geyer <debfx@ubuntu.com>
+
+#include <tunables/global>
+
+/usr/lib/postgresql/[0-9.]*/bin/postgres {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/ssl_keys>
+
+  /etc/postgresql/** r,
+  /usr/share/postgresql/** r,
+  /var/lib/postgresql/** rwl,
+  /{,var/}run/postgresql/** rw,
+
+  owner @{PROC}/[0-9]*/oom_adj rw,
+}

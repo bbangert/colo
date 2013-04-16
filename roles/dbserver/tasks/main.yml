@@ -14,14 +14,31 @@
     - redis-server
     - mariadb-server
 
+- name: Copy over Postgresql apparmor profile
+  tags: security
+  copy: >
+    src=usr.lib.postgresql.bin.postgres
+    dest=/etc/apparmor.d/usr.lib.postgresql.bin.postgres
+    owner=root group=root mode=0644
+
 - name: Start Databases
   service: name=$item state=started enabled=true
   with_items:
     - mysql
     - postgresql
 
+- name: Enable Postgres apparmor profile
+  command: /usr/sbin/aa-enforce /etc/apparmor.d/usr.lib.postgresql.bin.postgres
+  tags: security
+  notify:
+    - restart apparmor
+    - restart postgres
+
 - name: Copy Redis apparmor profile over
-  copy: src=usr.bin.redis-server dest=/etc/apparmor.d/usr.bin.redis-server owner=root group=root mode=0644
+  copy: >
+    src=usr.bin.redis-server
+    dest=/etc/apparmor.d/usr.bin.redis-server
+    owner=root group=root mode=0644
   tags: security
 
 - name: Enable Redis apparmor profile
