@@ -6,6 +6,8 @@
   #include <abstractions/user-tmp>
 
 
+  /etc/php5/** r,
+  /usr/lib/php5/** mr,
   /home/*/www/** rw,
   /usr/bin/php5-cgi mr,
   /var/www/** r,
