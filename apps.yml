@@ -18,6 +18,43 @@
         admin_email: robottaway.gmail.com
         include_google_apps: false
 
+  # Groovie sites
+  - name: Ensure www directory for groovie.org/be.groovie.org
+    tags: groovie
+    file: >
+        path=/var/www/${item}
+        owner=bbangert group=sysadmin
+        state=directory mode=0755
+    with_items:
+        - "groovie.org"
+        - "be.groovie.org"
+
+  - name: Copy groovie.org site files over
+    tags: groovie
+    copy: >
+        src=apps/files/groovie.org/$item
+        dest=/var/www/groovie.org/$item
+        owner=bbangert group=sysadmin mode=0644
+    with_items:
+        - index.html
+        - site.css
+
+  - name: Copy groovie nginx sites file
+    tags: groovie
+    template: >
+        src=apps/templates/nginx.groovie
+        dest=/etc/nginx/sites-available/groovie
+        owner=root group=root mode=0644
+    notify: restart nginx
+
+  - name: Link groovie config to active sites
+    tags: groovie
+    file: >
+        path=/etc/nginx/sites-enabled/groovie
+        src=/etc/nginx/sites-available/groovie
+        state=link owner=root group=root
+    notify: restart nginx
+
   handlers:
   - include: roles/common/handlers/main.yml
   - include: roles/dbserver/handlers/main.yml

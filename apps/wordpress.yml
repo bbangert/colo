@@ -4,7 +4,7 @@
 - name: Ensure python-mysql is installed
   apt: pkg="python-mysqldb" state=latest
 
-- name: Create www directory for $domain
+- name: Ensure www directory for $domain
   file: path=/var/www/$domain owner=www-data group=www-data state=directory mode=0755
 
 - name: Create the database for $domain

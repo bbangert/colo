@@ -1,0 +1,36 @@
+article,aside,figure,footer,header,hgroup,nav,section{display:block}
+
+body {
+    background-color: #d5d5d5;
+    color: #252525;
+    font-family: Palatino Linotype, Book Antiqua, Palatino, serif;
+}
+
+header h1 {
+    font-size: 197%;
+    font-weight: bold;
+    padding: 10px 0 15px 0;
+}
+
+section {
+    margin: 15px 0 15px 0;
+}
+section h1 {
+    font-size: 167%;
+    font-weight: bold;
+    padding: 8px 0 8px 0;
+}
+
+div.clearfix {
+    clear: both;
+}
+
+p {
+    font-size: 123.1%;
+    line-height: 1.7;
+}
+
+footer {
+    text-align: center;
+    padding-bottom: 15px;
+}

@@ -1,0 +1,31 @@
+server {
+        listen {{ ansible_default_ipv4.address }}:80;
+        server_name routes.groovie.org;
+        rewrite ^ http://routes.rtfd.org/;
+}
+
+server {
+        listen {{ ansible_default_ipv4.address }}:80;
+        server_name webhelpers.groovie.org;
+        rewrite ^ http://sluggo.scrapping.cc/python/WebHelpers/index.html;
+}
+
+server {
+        listen {{ ansible_default_ipv4.address }}:80;
+        server_name beaker.groovie.org;
+        rewrite ^ http://beaker.rtfd.org;
+}
+
+server {
+        listen {{ ansible_default_ipv4.address }}:80;
+        server_name groovie.org;
+        root /var/www/groovie.org;
+        sendfile on;
+}
+
+server {
+        listen {{ ansible_default_ipv4.address }}:80;
+        server_name be.groovie.org;
+        root /var/www/be.groovie.org;
+        sendfile on;
+}
