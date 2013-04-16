@@ -31,6 +31,14 @@ The Makefile does most of the dirty work, so first check out this repo.
             "ping": "pong"
         }
 
+Credentials
+===========
+
+To avoid storing passwords in the clear, credentials are stored in a
+``credentials`` directory for the host. This directory should be
+symlinked in from the appropriate secure location, its in the
+.gitignore to prevent accidental check-ins.
+
 Provisioning
 ============
 
