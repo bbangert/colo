@@ -1,16 +1,17 @@
 # Last Modified: Sun Apr 14 18:26:34 2013
 #include <tunables/global>
 
-/usr/sbin/ircd-hybrid flags=(complain) {
+/usr/sbin/ircd-hybrid {
   #include <abstractions/apache2-common>
   #include <abstractions/base>
 
   /usr/sbin/ircd-hybrid mr,
-  /usr/share/ircd-hybrid r,
+  /usr/share/ircd-hybrid/** mr,
   /usr/lib/ircd-hybrid/** mr,
   /var/log/ircd/** mrw,
   /run/ircd/* rw,
   /var/run/ircd/* rw,
-  /etc/ircd-hybrid/* r,
+  /etc/ircd-hybrid/** r,
+  /etc/ircd-hybrid/links.txt rw,
 
 }

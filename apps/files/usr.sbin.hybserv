@@ -1,0 +1,17 @@
+# Last Modified: Sun Apr 14 18:26:34 2013
+#include <tunables/global>
+
+/usr/sbin/ircd-hybrid {
+  #include <abstractions/apache2-common>
+  #include <abstractions/base>
+
+  /usr/sbin/hybserv mr,
+  /usr/share/hybserv/** r,
+  /var/log/ircd/** rw,
+  /run/ircd/* rw,
+  /var/run/ircd/hybserv.pid rw,
+  /etc/hybserv/** r,
+  /etc/hybserv/*.db rw,
+  /var/backups/hybserv/** rw,
+
+}
