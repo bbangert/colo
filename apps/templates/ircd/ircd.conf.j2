@@ -38,10 +38,10 @@ serverinfo {
 	max_clients = 512;
 
     /* postinst of this package already made this key for you */
-    rsa_private_key_file = "/etc/ircd-hybrid/key/ircd.key";
+    rsa_private_key_file = "/etc/ircd-hybrid/key/rsa.key";
 
     /* postinst of this package already made this certificate for you */
-    ssl_certificate_file = "/etc/ircd-hybrid/key/ircd.pem";
+    ssl_certificate_file = "/etc/ircd-hybrid/key/cert.pem";
 
 };
 
@@ -141,7 +141,7 @@ listen {
 	 */
 
 	/* port: listen on all available IPs, ports 6665 to 6669 */
-	host = "{{ ansible_default_ipv4.address }}";	# change this!
+	# host = "{{ ansible_default_ipv4.address }}";	# change this!
 	port = 6665 .. 6669;
 
     /* sslport: ports to accept ONLY ssl connections on */
@@ -263,76 +263,25 @@ operator {
 };
 
 /* connect {}: controls servers we connect to (OLD C:, N:, H:, L:) */
+connect {
+    /* name: the name of the server */
+    name = "ircservices.groovie.org";
+    /* host: the host or IP to connect to. If a hostname is used it
+     * must match the reverse dns of the server. */
+    host = "127.0.0.1";
 
-#connect {
-#	/* name: the name of the server */
-#	name = "irc.example.net";
-#
-#	/* host: the host or IP to connect to.  If a hostname is used it
-#	 * must match the reverse dns of the server.
-#	 */
-#	host = "192.168.0.1";
-#
-#	/* passwords: the passwords we send (OLD C:) and accept (OLD N:).
-#	 * The remote server will have these passwords reversed.
-#	 */
-#	send_password = "password";
-#	accept_password = "anotherpassword";
-#
-#	/* encrypted: controls whether the accept_password above has been
-#	 * encrypted.  (OLD CRYPT_LINK_PASSWORD now optional per connect)
-#	 */
-#	encrypted = no;
-#
-#	/* port: the port to connect to this server on */
-#	port = 6666;
-#
-#	/* hub mask: the mask of servers that this server may hub. Multiple
-#	 * entries are permitted
-#	 */
-#	hub_mask = "*";
-#
-#	/* leaf mask: the mask of servers this server may not hub.  Multiple
-#	 * entries are permitted.  Useful for forbidding EU -> US -> EU routes.
-#	 */
-#	#leaf_mask = "*.uk";
-#
-#	/* class: the class this server is in */
-#	class = "server";
-#
-#	/* autoconnect: controls whether we autoconnect to this server or not,
-#	 * dependent on class limits.
-#	 */
-#	autoconn = no;
-#
-#	/* compressed: controls whether traffic is compressed via ziplinks.
-#	 * By default this is disabled
-#	 */
-#	#compressed = yes;
-#
-#	/* lazylink: controls whether this server is a LazyLink.  LazyLink
-#	 * servers may NOT hub.  see doc/LazyLinks.as.implemented.txt
-#	 */
-#	#lazylink = yes;
-#
-#	/* masking: the servername we pretend to be when we connect */
-#	#fakename = "*.arpa";
-#};
+    /* passwords: the passwords we send (OLD C:) and accept (OLD N:).
+     * The remote server will have these passwords reversed. */
+    send_password = "$PASSWORD(credentials/${inventory_hostname}/ircd/hyb_send_password)";
+    accept_password = "$PASSWORD(credentials/${inventory_hostname}/ircd/hyb_accept_password)";
 
-#connect {
-#	name = "ipv6.some.server";
-#	host = "3ffd:dead:beef::1";
-#	send_password = "password";
-#	accept_password = "password";
-#	port = 6666;
-#
-#	/* aftype: controls whether the connection uses "ipv4" or "ipv6".
-#	 * Default is ipv4. */
-#	aftype = ipv6;
-#	class = "server";
-#};
+    /* compressed: controls whether traffic is compressed via ziplinks.
+    * By default this is disabled */
+    compressed = no;
+    hub_mask = "*";
+    class = "server";
+};
 
-/* shared {}: users that are allowed to remote kline (OLD U:) */
 shared {
 	/* name: the server the user must be on to set klines.  If this is not
 	 * specified, the user will be allowed to kline from all servers.

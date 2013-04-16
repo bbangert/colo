@@ -22,26 +22,50 @@
   - include: buildircd.yml
     when: "'installed' not in ircdcache.stdout"
 
-  - name: Enable IRC server
+  - name: Install hybsrv ppa
+    apt_repository: repo=ppa:malcscott/hybserv
+
+  - name: Install hybsrv package
+    apt: pkg=hybserv state=latest update_cache=yes
+
+  - name: Enable IRC/hybserv servers
     tags: irc
-    service: name="ircd-hybrid" enabled=true
+    service: name="$item" enabled=true
+    with_items:
+        - "ircd-hybrid"
+        - hybserv
 
-# - name: Copy key over
-#   tags: irc
-#   copy: src=credentials/${inventory_hostname}/ircd/groovie.org.key dest=/etc/ircd-hybrid/key/ircd.key owner=irc group=irc mode=0600
+  - name: Copy keys over
+    tags: irc
+    copy: >
+        src=credentials/${inventory_hostname}/ircd/${item}
+        dest=/etc/ircd-hybrid/key/ircd.key owner=irc group=irc mode=0600
+    with_items:
+        - "rsa.key"
+        - "rsa.pub"
 
-# - name: Copy pem cert over
-#   tags: irc
-#   copy: src=credentials/${inventory_hostname}/ircd/groovie.org.pem dest=/etc/ircd-hybrid/key/ircd.pem owner=root group=root mode=0644
+  - name: Copy pem cert over
+    tags: irc
+    copy: >
+        src=credentials/${inventory_hostname}/ircd/cert.pem
+        dest=/etc/ircd-hybrid/key/ircd.pem owner=root group=root mode=0644
 
-  - name: Copy ircd apparmor profile over
-    copy: src=apps/files/usr.sbin.ircd-hybrid dest=/etc/apparmor.d/usr.sbin.ircd-hybrid owner=root group=root mode=0644
+  - name: Copy ircd/hybserv apparmor profiles over
+    copy: >
+        src="apps/files/usr.sbin.${item}"
+        dest="/etc/apparmor.d/usr.sbin.${item}"
+        owner=root group=root mode=0644
+    with_items:
+        - hybserv
+        - "ircd-hybrid"
     tags:
         - irc
         - security
     notify:
         - enforce ircd
+        - enforce hybserv
         - restart ircd
+        - restart hybserv
 
   - name: Copy ircd files over
     tags: irc
@@ -56,12 +80,29 @@
          - ircd.motd
     notify: restart ircd
 
+  - name: Copy hybserv files over
+    tags: irc
+    template: >
+        src="apps/templates/ircd/hybserv.conf"
+        dest="/etc/hybserv/hybserv.conf"
+        owner=irc
+        group=irc
+        mode=0660
+    notify: restart hybserv
+
   handlers:
   - name: restart ircd
     service: name="ircd-hybrid" state=restarted
 
+  - name: restart hybserv
+    service: name="hybserv" state=restarted
+
   - name: enforce ircd
     command: /usr/sbin/aa-enforce /usr/sbin/ircd-hybrid
+    notify: restart apparmor
+
+  - name: enforce hybserv
+    command: /usr/sbin/aa-enforce /usr/sbin/hybserv
     notify: restart apparmor
 
   - include: roles/common/handlers/main.yml
