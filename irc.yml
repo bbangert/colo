@@ -58,7 +58,6 @@
     notify:
         - enforce ircd
         - enforce hybserv
-        - restart ircd
         - restart hybserv
 
   - name: Copy ircd files over
@@ -71,7 +70,6 @@
     with_items:
          - ircd.conf
          - ircd.motd
-    notify: restart ircd
 
   - name: Copy hybserv files over
     template: >
@@ -93,9 +91,6 @@
     when: "'6697/tcp' not in ircdufw.stdout"
 
   handlers:
-  - name: restart ircd
-    service: name="ircd-hybrid" state=restarted
-
   - name: restart hybserv
     service: name="hybserv" state=restarted
 
