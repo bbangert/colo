@@ -8,7 +8,6 @@
   # IRC packages and server setup
   - name: Install IRC client
     apt: pkg=$item state=latest
-    tags: irc
     with_items:
       - irssi
       - irssi-plugin-otr
@@ -29,14 +28,12 @@
     apt: pkg=hybserv state=latest update_cache=yes
 
   - name: Enable IRC/hybserv servers
-    tags: irc
     service: name="$item" enabled=true
     with_items:
         - "ircd-hybrid"
         - hybserv
 
   - name: Copy keys over
-    tags: irc
     copy: >
         src=credentials/${inventory_hostname}/ircd/${item}
         dest=/etc/ircd-hybrid/key/ircd.key owner=irc group=irc mode=0600
@@ -45,7 +42,6 @@
         - "rsa.pub"
 
   - name: Copy pem cert over
-    tags: irc
     copy: >
         src=credentials/${inventory_hostname}/ircd/cert.pem
         dest=/etc/ircd-hybrid/key/ircd.pem owner=root group=root mode=0644
@@ -58,9 +54,7 @@
     with_items:
         - hybserv
         - "ircd-hybrid"
-    tags:
-        - irc
-        - security
+    tags: security
     notify:
         - enforce ircd
         - enforce hybserv
@@ -68,7 +62,6 @@
         - restart hybserv
 
   - name: Copy ircd files over
-    tags: irc
     template: >
          src="apps/templates/ircd/${item}.j2"
          dest="/etc/ircd-hybrid/${item}"
@@ -81,7 +74,6 @@
     notify: restart ircd
 
   - name: Copy hybserv files over
-    tags: irc
     template: >
         src="apps/templates/ircd/hybserv.conf"
         dest="/etc/hybserv/hybserv.conf"
@@ -89,6 +81,16 @@
         group=irc
         mode=0660
     notify: restart hybserv
+
+  - name: Check for ircd ufw rule
+    shell: ufw status verbose
+    tags: security
+    register: ircdufw
+
+  - name: Enable ircd port if needed
+    shell: ufw allow 6670/tcp
+    tags: security
+    when: "'6670/tcp' not in ircdufw.stdout"
 
   handlers:
   - name: restart ircd
