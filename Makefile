@@ -18,4 +18,5 @@ $(HERE)/pythonVE: $(HERE)/virtualenv
 
 build: $(HERE)/pythonVE
 	git submodule update --init --recursive
-	cd ansible && $(PYTHON) setup.py install
+	source $(HERE)/pythonVE/bin/activate
+	source ansible/hacking/env-setup
