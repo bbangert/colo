@@ -1,102 +1,39 @@
-# ircd-hybrid configuration file [ircd.conf]
-# customized for Debian by Joshua Kwan <joshk@triplehelix.org>
-# modified for Debian by Aurélien GÉRÔME <ag@roxor.cx>
-
- /* serverinfo {}:  Contains information about the server. (OLD M:) */
 serverinfo {
-	/* name: the name of our server */
 	name = "groovie.org";
-
-	/* description: the description of our server.  '[' and ']' may not
-	 * be used here for compatibility with older servers.
-	 */
 	description = "Groovie Core";
-
-	/* network info: the name and description of the network this server
-	 * is on.  Shown in the 005 reply and used with serverhiding.
-	 */
 	network_name = "groovie";
 	network_desc = "groovie network";
 
-	/* hub: allow this server to act as a hub and have multiple servers
-	 * connected to it.  This may not be changed if there are active
-	 * LazyLink servers.
-	 */
 	hub = yes;
-
-	/* vhost: the IP to bind to when we connect outward to ipv4 servers.
-	 * This should be an ipv4 IP only.
-	 */
-	#vhost = "192.169.0.1";
-
-	/* vhost6: the IP to bind to when we connect outward to ipv6 servers.
-	 * This should be an ipv6 IP only.
-	 */
-	#vhost6 = "3ffe:80e8:546::2";
-
-	/* max clients: the maximum number of clients allowed to connect */
 	max_clients = 512;
-
-    /* postinst of this package already made this key for you */
     rsa_private_key_file = "/etc/ircd-hybrid/key/rsa.key";
-
-    /* postinst of this package already made this certificate for you */
     ssl_certificate_file = "/etc/ircd-hybrid/key/cert.pem";
-
 };
 
-/* admin {}: contains admin information about the server. (OLD A:) */
 admin {
 	name = "Ben Bangert";
 	description = "Main Server Administrator";
 	email = "<ben@groovie.org>";
 };
 
-/*
- * log {}:  contains information about logfiles.
- */
 log {
-	/* Do you want to enable logging to ircd.log? */
 	use_logging = yes;
 
-	/*
-	 * logfiles: the logfiles to use for user connects, /oper uses,
-	 * and failed /oper.  These files must exist for logging to be used.
-	 */
 	fname_userlog = "logs/userlog";
 	fname_operlog = "logs/operlog";
 	fname_killlog = "logs/kill";
 	fname_klinelog = "logs/kline";
 	fname_glinelog = "logs/gline";
 
-	/*
-	 * log_level: the amount of detail to log in ircd.log.  The
-	 * higher, the more information is logged.  May be changed
-	 * once the server is running via /quote SET LOG.  Either:
-	 * L_CRIT, L_ERROR, L_WARN, L_NOTICE, L_TRACE, L_INFO or L_DEBUG
-	 */
 	log_level = L_INFO;
 };
 
-/* class {}: contain information about classes for users (OLD Y:) */
 class {
-	/* name: the name of the class.  classes are text now */
 	name = "users";
 
-	/* ping time: how often a client must reply to a PING from the
-	 * server before they are dropped.
-	 */
 	ping_time = 2 minutes;
-
-	/* number per ip: the number of users per host allowed to connect */
 	number_per_ip = 8;
-
-	/* max number: the maximum number of users allowed in this class */
 	max_number = 100;
-
-	/* sendq: the amount of data allowed in a clients queue before
-	 * they are dropped.
-	 */
 	sendq = 100 kbytes;
 };
 
@@ -120,119 +57,42 @@ class {
 	name = "server";
 	ping_time = 5 minutes;
 
-	/* connectfreq: only used in server classes.  specifies the delay
-	 * between autoconnecting to servers.
-	 */
 	connectfreq = 5 minutes;
-
-	/* max number: the amount of servers to autoconnect to */
 	max_number = 1;
-
-	/* sendq: servers need a higher sendq as they send more data */
 	sendq=2 megabytes;
 };
 
-/* listen {}: contain information about the ports ircd listens on (OLD P:) */
 listen {
-	/* port: the specific port to listen on.  if no host is specified
-	 * before, it will listen on all available IPs.
-	 *
-	 * ports are seperated via a comma, a range may be specified using ".."
-	 */
-
-	/* port: listen on all available IPs, ports 6665 to 6669 */
-	# host = "{{ ansible_default_ipv4.address }}";	# change this!
 	port = 6665 .. 6669;
 
     /* sslport: ports to accept ONLY ssl connections on */
     flags = ssl;
     port = 6670, 6697;
-
 };
 
-/* auth {}: allow users to connect to the ircd (OLD I:) */
 auth {
-	/* user: the user@host allowed to connect.  multiple IPv4/IPv6 user
-	 * lines are permitted per auth block.
-	 */
 	user = "*@127.0.0.1";
 
-	/* password: an optional password that is required to use this block */
-
-	/* spoof: fake the users host to be be this.  This is free-form,
-	 * just do everyone a favour and dont abuse it. (OLD I: = flag)
-	 */
 	spoof = "groovie.org";
-
-	/* spoof notice: enable spoofing notification to admins (default yes) */
 	spoof_notice = yes;
-
-	/* exceed limit: allow a user to exceed class limits (OLD I: > flag) */
 	exceed_limit = yes;
-
-	/* kline exempt: exempt this user from k/glines (OLD I: ^ flag) */
 	kline_exempt = yes;
-
-	/* gline exempt: exempt this user from glines (OLD I: _ flag) */
 	gline_exempt = yes;
-
-	/* no tilde: remove ~ from a user with no ident (OLD I: - flag) */
 	no_tilde = yes;
-
-	/* class: the class the user is placed in */
 	class = "users";
 };
-
-#auth {
-#	# redirect: the server and port to redirect a user to.  A user does
-#	# not have to obey the redirection, the ircd just suggests to them
-#	# an alternative server.
-#	redirserv = "irc.at.the.edge.of.earth";
-#	redirport = 6667;
-
-#	/* hostmask user has to match to receive redirection */
-#	user = "*.on.mars";
-#
-#	/* class: a class is required even though it is not used */
-#	class = "users";
-#};
 
 auth {
 	user = "*@*";
 	class = "users";
-
-	/* restricted: stop the client sending mode changes */
-	#restricted = yes;
-
-	/* have ident: require the user has identd to connect (OLD I: + flag) */
 	have_ident = no;
 };
 
-/* operator {}: defines ircd operators. (OLD O:)
- * ircd-hybrid no longer supports local operators, privileges are
- * controlled via flags.
- */
 operator {
-	/* name: the name of the oper */
 	name = "ben";
-
-	/* user: the user@host required for this operator.  CIDR is not
-	 * supported.  multiple user="" lines are supported.
-	 */
 	user = "bbangert@127.0.0.1";
     user = "~bbangert@groovie.org";
-
-	/* password: the password required to oper.  By default this will
-	 * need to be encrypted using '/usr/bin/mkpasswd'.
-	 * WARNING: Please do not mix up the 'mkpasswd' program from
-         * /usr/sbin with this one. If you are root, typing 'mkpasswd'
-	 * will run that one instead and you will receive a strange error.
-	 *
-	 * MD5 is supported. If you want to use it, use mkpasswd -Hmd5.
-	 */
     password = "$PASSWORD(credentials/${inventory_hostname}/ircd/oper_pass)";
-
-	/* class: the class the oper joins when they successfully /oper */
 	class = "opers";
 
 	/* privileges: controls the activities and commands an oper are
@@ -263,50 +123,37 @@ operator {
 	admin = yes;
 };
 
+operator {
+    name = "pjenvey";
+    user = "*pjenvey@underboss.org";
+    password = "$PASSWORD(credentials/${inventory_hostname}/ircd/phil_oper_pass)";
+    class = "opers";
+    global_kill = yes;
+    remote = yes;
+    kline = yes;
+    unkline = yes;
+    gline = yes;
+    die = yes;
+    nick_changes = yes;
+};
+
+
 /* connect {}: controls servers we connect to (OLD C:, N:, H:, L:) */
 connect {
-    /* name: the name of the server */
     name = "ircservices.groovie.org";
-    /* host: the host or IP to connect to. If a hostname is used it
-     * must match the reverse dns of the server. */
     host = "127.0.0.1";
-
-    /* passwords: the passwords we send (OLD C:) and accept (OLD N:).
-     * The remote server will have these passwords reversed. */
     send_password = "$PASSWORD(credentials/${inventory_hostname}/ircd/hyb_send_password)";
     accept_password = "$PASSWORD(credentials/${inventory_hostname}/ircd/hyb_accept_password)";
 
-    /* compressed: controls whether traffic is compressed via ziplinks.
-    * By default this is disabled */
     compressed = no;
     hub_mask = "*";
     class = "server";
 };
 
 shared {
-	/* name: the server the user must be on to set klines.  If this is not
-	 * specified, the user will be allowed to kline from all servers.
-	 */
-	# name = "hybrid7.debian.local";
-
-	/* user: the user@host mask that is allowed to set klines.  If this is
-	 * not specified, all users on the server above will be allowed to set
-	 * a remote kline.
-	 */
-	user = "bbangert@localhost";
+	user = "bbangert@groovie.org";
 };
 
-/* kill {}: users that are not allowed to connect (OLD K:)
- * Oper issued klines will be added to the specified kline config
- */
-#kill {
-#	user = "bad@*.hacked.edu";
-#	reason = "Obviously hacked account";
-#};
-
-/* deny {}: IPs that are not allowed to connect (before DNS/ident lookup)
- * Oper issued dlines will be added to the specified dline config
- */
 deny {
 	ip = "10.0.1.0/24";
 	reason = "Reconnecting vhosted bots";
@@ -337,30 +184,6 @@ resv {
 	reason = "Clone bots";
 	nick = "clone*";
 };
-
-/* gecos {}:  The X: replacement, used for banning users based on their
- * "realname".  The action may be either:
- *      warn:   allow client to connect, but send message to opers
- *      reject: drop clients but also send message to opers.
- *      silent: silently drop clients who match.
- */
-#gecos {
-#	name = "*sex*";
-#	reason = "Possible spambot";
-#	action = warn;
-#};
-
-#gecos {
-#	name = "sub7server";
-#	reason = "Trojan drone";
-#	action = reject;
-#};
-
-#gecos {
-#	name = "*http*";
-#	reason = "Spambot";
-#	action = silent;
-#};
 
 /* The channel block contains options pertaining to channels */
 channel {

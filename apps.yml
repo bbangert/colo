@@ -20,7 +20,6 @@
 
   # Groovie sites
   - name: Ensure www directory for groovie.org/be.groovie.org
-    tags: groovie
     file: >
         path=/var/www/${item}
         owner=bbangert group=sysadmin
@@ -30,7 +29,6 @@
         - "be.groovie.org"
 
   - name: Copy groovie.org site files over
-    tags: groovie
     copy: >
         src=apps/files/groovie.org/$item
         dest=/var/www/groovie.org/$item
@@ -40,7 +38,6 @@
         - site.css
 
   - name: Copy groovie nginx sites file
-    tags: groovie
     template: >
         src=apps/templates/nginx.groovie
         dest=/etc/nginx/sites-available/groovie
@@ -48,12 +45,18 @@
     notify: restart nginx
 
   - name: Link groovie config to active sites
-    tags: groovie
     file: >
         path=/etc/nginx/sites-enabled/groovie
         src=/etc/nginx/sites-available/groovie
         state=link owner=root group=root
     notify: restart nginx
+
+  # Paste ofcode
+  - name: Check out paste.ofcode.org into its repo
+    tags: paste
+    git: >
+        repo=git@github.com:bbangert/ofcode.git
+        dest=/var/www/ofcode.org
 
   handlers:
   - include: roles/common/handlers/main.yml

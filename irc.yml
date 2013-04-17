@@ -58,7 +58,6 @@
     notify:
         - enforce ircd
         - enforce hybserv
-        - restart hybserv
 
   - name: Copy ircd files over
     template: >
@@ -78,7 +77,6 @@
         owner=irc
         group=irc
         mode=0660
-    notify: restart hybserv
 
   - name: Check for ircd ufw rule
     shell: ufw status verbose
@@ -91,9 +89,6 @@
     when: "'6697/tcp' not in ircdufw.stdout"
 
   handlers:
-  - name: restart hybserv
-    service: name="hybserv" state=restarted
-
   - name: enforce ircd
     command: /usr/sbin/aa-enforce /usr/sbin/ircd-hybrid
     notify: restart apparmor
