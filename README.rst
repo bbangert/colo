@@ -15,11 +15,13 @@ The Makefile does most of the dirty work, so first check out this repo.
 
         $ make
 
-2. Activate the Python virtualenv so you can run `ansible` directly.
+2. Activate the Python virtualenv so you can run `ansible` directly, then
+   activate the ansible checkout.
 
     .. code-block:: bash
 
         $ source pythonVE/bin/activate
+        $ source ansible/hacking/env-setup
 
 3. Test that we can ping the collocation host successfully:
 
