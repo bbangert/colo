@@ -33,6 +33,13 @@ The Makefile does most of the dirty work, so first check out this repo.
             "ping": "pong"
         }
 
+.. note::
+
+    This setup assumes that the root user on the host is usable via ssh
+    and has your current users public key in its authorized_keys. This
+    setup *will lock down ssh to public keys only*, so ensure that your
+    ssh key added to the root users authorized_keys file.
+
 Credentials
 ===========
 
