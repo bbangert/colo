@@ -25,6 +25,7 @@
     - htop
     - supervisor
     - python-software-properties
+    - software-properties-common
   tags: supervisor
 
 - name: Check supervisor status
