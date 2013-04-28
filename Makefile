@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 HERE = $(shell pwd)
 BIN = $(HERE)/pythonVE/bin
 PIP = $(BIN)/pip
