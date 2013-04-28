@@ -1,3 +1,9 @@
+- name: Setup the Postgres key
+  apt_key: url=https://www.postgresql.org/media/keys/ACCC4CF8.asc state=present
+                     
+- name: Setup the MariaDb key
+  apt_key: url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xCBCB082A1BB943DB state=present
+
 - name: Setup the redis PPA
   apt_repository: repo=ppa:rwky/redis
 

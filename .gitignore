@@ -2,3 +2,6 @@ pythonVE
 virtualenv
 credentials
 *.pyc
+*.un~
+Vagrantfile
+.vagrant
