@@ -34,11 +34,35 @@
     notify: restart nginx
 
   # Paste ofcode
+  - name: Add pasteofcode user
+    user: name=pasteofcode
+    tags: paste
+
+  - name: Add pasteofcode init files
+    copy: >
+        src=apps/files/${item}.conf
+        dest=/etc/init/${item}.conf
+        owner=root group=root mode=0644
+    with_items:
+        - pasteofcode
+        - pasteofcode-web
+
   - name: Check out paste.ofcode.org into its repo
     tags: paste
     git: >
-        repo=git@github.com:bbangert/ofcode.git
-        dest=/var/www/ofcode.org
+        repo=https://github.com/bbangert/ofcode.git
+        dest=/home/pasteofcode/ofcode.org
+        force=yes
+        version=26b0331bfdb27d9dda0f85db658619b6c14ab421
+
+  - name: Chown it all to pasteofcode
+    tags: paste
+    shell: chown -R pasteofcode /home/pasteofcode
+
+  - name: Run the makefile
+    tags: paste
+    shell: su - pasteofcode -c 'cd /home/pasteofcode/ofcode.org; make'
+    notify: restart pasteofcode
 
   handlers:
   - include: roles/common/handlers/main.yml

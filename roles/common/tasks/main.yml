@@ -25,6 +25,8 @@
     - htop
     - python-software-properties
     - software-properties-common
+    - make
+    - python2.7-dev
 
 - name: Install security packages
   apt: pkg=$item state=latest update_cache=yes
