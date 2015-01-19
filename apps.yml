@@ -17,6 +17,7 @@
         src=apps/templates/nginx.ofcode
         dest=/etc/nginx/sites-available/ofcode
         owner=root group=root mode=0644
+    tags: paste
     notify: restart nginx
 
   - name: Link groovie config to active sites
@@ -31,6 +32,7 @@
         path=/etc/nginx/sites-enabled/ofcode
         src=/etc/nginx/sites-available/ofcode
         state=link owner=root group=root
+    tags: paste
     notify: restart nginx
 
   # Paste ofcode
