@@ -1,11 +1,13 @@
 serverinfo {
 	name = "groovie.org";
+    sid = "0GR";
 	description = "Groovie Core";
 	network_name = "groovie";
 	network_desc = "groovie network";
 
 	hub = yes;
 	max_clients = 512;
+    max_nick_length = 30;
     rsa_private_key_file = "/etc/ircd-hybrid/key/rsa.key";
     ssl_certificate_file = "/etc/ircd-hybrid/key/cert.pem";
 };
@@ -17,21 +19,69 @@ admin {
 };
 
 log {
-	use_logging = yes;
+        /* Do you want to enable logging to ircd.log? */
+        use_logging = yes;
 
-	fname_userlog = "logs/userlog";
-	fname_operlog = "logs/operlog";
-	fname_killlog = "logs/kill";
-	fname_klinelog = "logs/kline";
-	fname_glinelog = "logs/gline";
+        file {
+                type = oper;
+                name = "/var/log/ircd/ircd-hybrid-oper.log";
+                size = 10 megabytes;
+        };
 
-	log_level = L_INFO;
+        file {
+                type = user;
+                name = "/var/log/ircd/ircd-hybrid-user.log";
+                size = 10 megabytes;
+        };
+
+        file {
+                type = kill;
+                name = "/var/log/ircd/ircd-hybrid-kill.log";
+                size = 10 megabytes;
+        };
+
+        file {
+                type = kline;
+                name = "/var/log/ircd/ircd-hybrid-kline.log";
+                size = 10 megabytes;
+        };
+
+        file {
+                type = dline;
+                name = "/var/log/ircd/ircd-hybrid-dline.log";
+                size = 10 megabytes;
+        };
+
+        file {
+                type = gline;
+                name = "/var/log/ircd/ircd-hybrid-gline.log";
+                size = 10 megabytes;
+        };
+
+        file {
+                type = xline;
+                name = "/var/log/ircd/ircd-hybrid-xline.log";
+                size = 10 megabytes;
+        };
+
+        file {
+                type = resv;
+                name = "/var/log/ircd/ircd-hybrid-resv.log";
+                size = 10 megabytes;
+        };
+
+        file {
+                type = debug;
+                name = "/var/log/ircd/ircd-hybrid-debug.log";
+                size = 10 megabytes;
+        };
 };
+
 
 class {
 	name = "users";
 
-	ping_time = 2 minutes;
+	ping_time = 300 seconds;
 	number_per_ip = 8;
 	max_number = 100;
 	sendq = 100 kbytes;
@@ -66,6 +116,7 @@ listen {
 	port = 6665 .. 6669;
 
     /* sslport: ports to accept ONLY ssl connections on */
+    host = "{{ ansible_default_ipv4.address }}";
     flags = ssl;
     port = 6670, 6697;
 };
@@ -74,18 +125,14 @@ auth {
 	user = "*@127.0.0.1";
 
 	spoof = "groovie.org";
-	spoof_notice = yes;
-	exceed_limit = yes;
-	kline_exempt = yes;
-	gline_exempt = yes;
-	no_tilde = yes;
 	class = "users";
+
+    flags = spoof_notice, kline_exempt, exceed_limit, gline_exempt, no_tilde;
 };
 
 auth {
 	user = "*@*";
 	class = "users";
-	have_ident = no;
 };
 
 operator {
@@ -112,15 +159,9 @@ operator {
 	 *               may (un)load modules and see the
 	 *               real IPs of servers.
 	 */
-	global_kill = yes;
-	remote = yes;
-	kline = yes;
-	unkline = yes;
-	gline = yes;
-	die = yes;
-	rehash = yes;
-	nick_changes = yes;
-	admin = yes;
+    umodes = locops, servnotice, operwall, wallop;
+    flags = kill, kill:remote, connect, connect:remote, kline, unkline,
+            xline, globops, restart, die, rehash, admin, operwall, module;
 };
 
 operator {
@@ -128,13 +169,9 @@ operator {
     user = "*pjenvey@underboss.org";
     password = "$PASSWORD(credentials/${inventory_hostname}/ircd/phil_oper_pass)";
     class = "opers";
-    global_kill = yes;
-    remote = yes;
-    kline = yes;
-    unkline = yes;
-    gline = yes;
-    die = yes;
-    nick_changes = yes;
+    umodes = locops, servnotice, operwall, wallop;
+    flags = kill, kill:remote, connect, connect:remote, kline, unkline,
+            xline, globops, restart, die, rehash, admin, operwall, module;
 };
 
 

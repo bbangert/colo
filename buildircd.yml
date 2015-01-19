@@ -6,6 +6,16 @@
     - openssl
     - "libssl-dev"
     - fakeroot
+    - dpkg-dev
+    - debhelper
+    - docbook-to-man
+    - flex
+    - bison
+    - libpcre3-dev
+    - libgeoip-dev
+    - automake
+    - dh-autoreconf
+    - libltdl-dev
 
 - name: Create src dir for ircd-hybrid
   file: path=/usr/local/src/ircd state=directory
@@ -17,16 +27,8 @@
   shell: 'ls -p /usr/local/src/ircd | grep "ircd.*/"'
   register: ircdname
 
-- name: Edit build file to add OpenSSL support
-  lineinfile: >
-    regexp="^USE_OPENSSL = 1"
-    insertafter="^MAXCLIENTS"
-    dest="/usr/local/src/ircd/${ircdname.stdout}/debian/rules"
-    state=present
-    line="USE_OPENSSL = 1"
-
 - name: Build the ircd package
-  shell: "cd /usr/local/src/ircd/${ircdname.stdout} && dpkg-buildpackage -rfakeroot -uc -b"
+  shell: "cd /usr/local/src/ircd/${ircdname.stdout} && USE_OPENSSL=1 dpkg-buildpackage -rfakeroot -uc -b"
 
 - name: Install the build package
   shell: "cd /usr/local/src/ircd && dpkg -i ircd-hybrid_*.deb"

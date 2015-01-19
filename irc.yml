@@ -13,11 +13,16 @@
       - irssi-plugin-otr
       - irssi-scripts
 
-  - name: Install IRCd/hybsrv package
-    apt: pkg=$item state=latest update_cache=yes
-    with_items:
-      - ircd-hybrid
-      - hybserv
+  # Check to see if we need to build ircd and install it
+  - name: Check for ircd installed
+    shell: "aptitude show ircd-hybrid | grep State"
+    register: ircdcache
+
+  - include: buildircd.yml
+    when: "'installed' not in ircdcache.stdout"
+
+  - name: Install hybsrv package
+    apt: pkg=hybserv state=latest update_cache=yes
 
   - name: Enable IRC/hybserv servers
     service: name="$item" enabled=true
@@ -26,12 +31,12 @@
         - hybserv
 
   - name: Ensure key dir
-    file: path=/etc/ircd-hybrid/key/ owner=irc group=irc mode=0600 state=directory
+    file: path=/etc/ircd-hybrid/key/ owner=irc group=irc mode=0700 state=directory
 
   - name: Copy keys over
     copy: >
         src=credentials/${inventory_hostname}/ircd/${item}
-        dest=/etc/ircd-hybrid/key/ircd.key owner=irc group=irc mode=0600
+        dest=/etc/ircd-hybrid/key/${item} owner=irc group=irc mode=0600
     with_items:
         - "rsa.key"
         - "rsa.pub"
@@ -39,7 +44,7 @@
   - name: Copy pem cert over
     copy: >
         src=credentials/${inventory_hostname}/ircd/cert.pem
-        dest=/etc/ircd-hybrid/key/ircd.pem owner=root group=root mode=0644
+        dest=/etc/ircd-hybrid/key/cert.pem owner=irc group=irc mode=0600
 
   - name: Copy ircd/hybserv apparmor profiles over
     copy: >
@@ -64,6 +69,7 @@
     with_items:
          - ircd.conf
          - ircd.motd
+    notify: restart ircd
 
   - name: Copy hybserv files over
     template: >
@@ -83,6 +89,7 @@
     with_items:
         - nick
         - chan
+    notify: restart hybserv
 
   - name: Check for ircd ufw rule
     shell: ufw status verbose
@@ -102,6 +109,12 @@
   - name: enforce hybserv
     command: /usr/sbin/aa-enforce /usr/sbin/hybserv
     notify: restart apparmor
+
+  - name: restart ircd
+    service: name="ircd-hybrid" state=restarted
+
+  - name: restart hybserv
+    service: name=hybserv state=restarted
 
   - include: roles/common/handlers/main.yml
   - include: roles/dbserver/handlers/main.yml
