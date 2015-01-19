@@ -55,7 +55,7 @@
         repo=https://github.com/bbangert/ofcode.git
         dest=/home/pasteofcode/ofcode.org
         force=yes
-        version=26b0331bfdb27d9dda0f85db658619b6c14ab421
+        version=2792499c95614db640de36578c195ba3870b7ff4
 
   - name: Chown it all to pasteofcode
     tags: paste
