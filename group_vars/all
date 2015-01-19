@@ -1,10 +1,6 @@
 ---
 
-ntpserver: cdns.ovh.net
+ntpserver: 0.ubuntu.pool.ntp.org
 admins:
     - user: bbangert
       key: "ssh-dss AAAAB3NzaC1kc3MAAACBAIQ5EYhy6c7Lwrxwm7Afy9154nfgVyGkeodKhlgJLoSKIvql/aiBmgF0GaUXL4qCbU8LvEe9RdhBgjvijbq0Tre9wGYwWpAgxIyzUioaKLyJUE5jIDaxfPCkNwJna/85McpvuITJQ5ZbqdTzaUw97N7DVcUZ6hAFrF97DETMuuonAAAAFQDBEGBfwY3TsV1Hm1psFb2d4427uQAAAIAyslyR39meAWdCenNgsYI3XqSB+ezxWxs845w++bJqnarEdC+JtjQ8WtSMQqVRdWyZkpEhVy3P3MXL90Nxj7dl2cwRM5aQd3KbHjZE+bRDQEkQBHuEWVpXNR6WT4XKa0RUGdvklJo3E7WH3BJF4uovUU+lfU23oobYETeMLeIh8AAAAIEAgSHYogHIyCjjSTGvwrqzEUiRJZG5kQuCcrCkL22qhMq1/QEtS58GxP+syDY/25ApWmq3Ld/6Zsth/FN4c1HcRxTe23QTAFRcr2lxOfpkuXnB5w4Hdw5aYx6FJN2/R7zPjCVIPtTMEUkRy2bvr7Kl24Hz2MpWfH0pfNclysvZquk= ben@Turing.local."
-    - user: robottaway
-      key: "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAw5h2KzA/T5/HSxF9yEWI/xmvboK4zRPMvhZ/7c9DHRNBKF5zC1Zi/8AizaT392ewdK+ps9tXmd3M6q5DXuyjGqm+nthvgFf7Rk7uDPnjmQqxlKl/mnHQpTWwOHeaNld8M9CuWqMNvDZuJ7ZzzIn/EfaQHIiKJUq/gdJ72Ncq6n+2dq5gjvNUZMJWkWniPxKJu2ZOyhPv1mV6iT1V0m6YoIEZNL0yBVoYLOHEApPZSjbdR/wF/WCOQ9Qj1cTkSX08nwy3OPazWi8wLv3mmvZooEWibT3rHcE51oKwC67kqPCbkrLP/EVodKOscEN7ZkyC5+6/1idyECajtCti4xR/GQ== robottaway@gmail.com"
-    - user: jharen
-      key: "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAqd/LKDXTpxdcVfFpWSRrUOpjVYW8VTurcGbtMFkSiDpx4cOI+oGZ3B4vLplgDb7d4gEOcFxXhW3cNKgnXByOK2+UAD/xcDbEejzdfAzXEPQc+JDG2lHVrW2+vYPlM3WAhCM9Y5x/4NWYzBCdwEUk8XRzbO/pvJcAQ3ic9N8qDMixT3bl0xIS8at6DC285X4nszuhalHMCD4zaE7TULQkqIsCsl3IvsTvkD09kSGE+neG/O8e26xUhLFR/GabzBYhVZ6s9/JVozQAjEvFGUu5il7IoVUXI+zd4jbzcO4AO9Y/DepXS/aFuR+ChooGplaRcNxZFYEK3Mqss1tZ6TZ72w== jharen@lgmac-jharen.local"

@@ -13,25 +13,20 @@
       - irssi-plugin-otr
       - irssi-scripts
 
-  # Check to see if we need to build ircd and install it
-  - name: Check for ircd installed
-    shell: "apt-cache show ircd-hybrid | grep Status"
-    register: ircdcache
-
-  - include: buildircd.yml
-    when: "'installed' not in ircdcache.stdout"
-
-  - name: Install hybsrv ppa
-    apt_repository: repo=ppa:malcscott/hybserv
-
-  - name: Install hybsrv package
-    apt: pkg=hybserv state=latest update_cache=yes
+  - name: Install IRCd/hybsrv package
+    apt: pkg=$item state=latest update_cache=yes
+    with_items:
+      - ircd-hybrid
+      - hybserv
 
   - name: Enable IRC/hybserv servers
     service: name="$item" enabled=true
     with_items:
         - "ircd-hybrid"
         - hybserv
+
+  - name: Ensure key dir
+    file: path=/etc/ircd-hybrid/key/ owner=irc group=irc mode=0600 state=directory
 
   - name: Copy keys over
     copy: >
@@ -78,6 +73,17 @@
         group=irc
         mode=0660
 
+  - name: Copy chan/nick.db files over
+    copy: >
+        src="credentials/${inventory_hostname}/ircd/${item}.db"
+        dest="/etc/hybserv/${item}.db"
+        owner=irc
+        group=irc
+        mode=0660
+    with_items:
+        - nick
+        - chan
+
   - name: Check for ircd ufw rule
     shell: ufw status verbose
     tags: security
@@ -100,4 +106,3 @@
   - include: roles/common/handlers/main.yml
   - include: roles/dbserver/handlers/main.yml
   - include: roles/webserver/handlers/main.yml
-  - include: roles/nameserver/handlers/main.yml

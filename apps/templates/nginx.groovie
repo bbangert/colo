@@ -19,13 +19,26 @@ server {
 server {
         listen {{ ansible_default_ipv4.address }}:80;
         server_name groovie.org;
-        root /var/www/groovie.org;
-        sendfile on;
+        location / {
+                rewrite ^ http://www.groovie.org/;
+        }
 }
 
 server {
         listen {{ ansible_default_ipv4.address }}:80;
         server_name be.groovie.org;
-        root /var/www/be.groovie.org;
-        sendfile on;
+        location ~ _ {
+                rewrite ^([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)_(.*)$ $1-$2-$3-$4-$5-$6-$7
+-$8-$9;
+                rewrite ^([^_]*)_([^_]*)_([^_]*)_([^_]*)_(.*)$ $1-$2-$3-$4-$5;
+                rewrite ^([^_]*)_([^_]*)_(.*)$ $1-$2-$3;
+                rewrite ^([^_]*)_(.*)$ $1-$2;
+        }
+
+        location / {
+                rewrite ^/index.* http://www.groovie.org/blog;
+                rewrite ^/\d+/\d+/\d+/(.*?).html http://www.groovie.org/blog/$1;
+                rewrite ^/(.*?).html http://www.groovie.org/blog/$1;
+                rewrite ^/(.*) http://www.groovie.org/blog/$1;
+        }
 }

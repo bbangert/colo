@@ -22,5 +22,3 @@
   command: /usr/sbin/ufw allow "Nginx Full"
   tags: security
   when: '"Nginx Full" not in ufwstatus'
-
-- include: php.yml

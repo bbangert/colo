@@ -10,6 +10,3 @@
 
 - name: restart apparmor
   service: name=apparmor state=restarted
-
-- name: reread supervisor
-  command: /usr/bin/supervisorctl reread

@@ -5,7 +5,7 @@
   #include <abstractions/base>
 
   /run/redis/* rw,
-  /etc/redis/* r,
+  /etc/redis/** r,
   /var/lib/redis/* rw,
   /var/log/redis/* rw,
   /var/run/redis/* rw,

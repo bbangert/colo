@@ -23,16 +23,8 @@
     - vim
     - traceroute
     - htop
-    - supervisor
     - python-software-properties
     - software-properties-common
-  tags: supervisor
-
-- name: Check supervisor status
-  command: /usr/bin/supervisorctl status
-  register: supervisorstatus
-  ignore_errors: True
-  tags: supervisor
 
 - name: Install security packages
   apt: pkg=$item state=latest update_cache=yes

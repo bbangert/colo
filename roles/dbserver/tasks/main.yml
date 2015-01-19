@@ -1,58 +1,23 @@
 - name: Setup the Postgres key
   apt_key: url=https://www.postgresql.org/media/keys/ACCC4CF8.asc state=present
-                     
-- name: Setup the MariaDb key
-  apt_key: url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xCBCB082A1BB943DB state=present
 
 - name: Setup the redis PPA
   apt_repository: repo=ppa:rwky/redis
 
 - name: Setup the Postgres PPA
-  apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main'
+  apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
 
-- name: Setup the MariaDB 10 PPA
-  apt_repository: repo='deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu precise main'
-
-- name: Install Postgresql/Redis/MariaDB
+- name: Install Postgresql/Redis
   apt: pkg=$item state=latest update_cache=yes
   with_items:
     - postgresql
     - redis-server
-    - mariadb-server
-
-- name: Copy over Postgresql apparmor profile
-  tags: security
-  copy: >
-    src=usr.lib.postgresql.bin.postgres
-    dest=/etc/apparmor.d/usr.lib.postgresql.bin.postgres
-    owner=root group=root mode=0644
 
 - name: Start Databases
   service: name=$item state=started enabled=true
   with_items:
-    - mysql
     - postgresql
-
-- name: Enable Postgres apparmor profile
-  command: /usr/sbin/aa-enforce /etc/apparmor.d/usr.lib.postgresql.bin.postgres
-  tags: security
-  notify:
-    - restart apparmor
-    - restart postgres
-
-- name: Copy Redis apparmor profile over
-  copy: >
-    src=usr.bin.redis-server
-    dest=/etc/apparmor.d/usr.bin.redis-server
-    owner=root group=root mode=0644
-  tags: security
-
-- name: Enable Redis apparmor profile
-  command: /usr/sbin/aa-enforce /usr/bin/redis-server
-  tags: security
-  notify:
-    - restart apparmor
-    - restart redis
+    - redis-server
 
 - name: Start/Enable Redis
   service: name=redis-server enabled=true
