@@ -39,7 +39,6 @@
         dest=/etc/ircd-hybrid/key/${item} owner=irc group=irc mode=0600
     with_items:
         - "rsa.key"
-        - "rsa.pub"
 
   - name: Copy pem cert over
     copy: >
