@@ -1,58 +1,16 @@
 ---
 
-- name: Install ntp
-  apt: pkg=ntp
-  tags: ntp
-
-- name: Configure ntp file
-  template: src=ntp.conf.j2 dest=/etc/ntp.conf
-  tags: ntp
-  notify: restart ntp
-
-- name: Start the ntp service
-  service: name=ntp state=started enabled=true
-  tags: ntp
-
 - include: users.yml
 
 - name: Install the unix basics
   tags: repos
-  apt: pkg=$item state=latest update_cache=yes
+  pkgng: pkg={{item}}
   with_items:
     - screen
     - vim
     - traceroute
     - htop
-    - python-software-properties
-    - software-properties-common
-    - make
-    - python2.7-dev
-
-- name: Install security packages
-  apt: pkg=$item state=latest update_cache=yes
-  tags: security
-  with_items:
-    - apparmor
-    - apparmor-profiles
-    - apparmor-utils
-    - ufw
-    - unattended-upgrades
-
-- name: Start apparmor
-  service: name=apparmor state=started enabled=true
-  tags: security
-
-- name: Enable OpenSSH on ufw
-  command: /usr/sbin/ufw allow OpenSSH
-  tags: security
-
-- name: Enable ufw
-  command: /usr/sbin/ufw --force enable
-  tags: security
 
 - name: Update sshd config to use key auth only
-  copy: src=sshd_config dest=/etc/ssh/sshd_config owner=root group=root mode=0644
+  copy: src=sshd_config dest=/etc/ssh/sshd_config owner=root group=wheel mode=0644
   notify: restart sshd
-
-- name: Setup unattended security updates
-  copy: src=apt.10periodic dest=/etc/apt/apt.conf.d/10periodic owner=root group=root mode=0644

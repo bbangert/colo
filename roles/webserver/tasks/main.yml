@@ -1,24 +1,14 @@
-- name: Setup the nginx PPA
-  apt_repository: repo=ppa:nginx/stable
-
 - name: Install nginx
-  apt: pkg=nginx state=latest update_cache=yes
+  pkgng: name=nginx
 
-- name: Fixup the default nginx host
-  copy: src=nginx.default dest=/etc/nginx/sites-available/default owner=root group=root mode=0644
+- name: Copy nginx.conf up
+  copy: src=nginx.conf dest=/usr/local/etc/nginx/nginx.conf owner=root group=wheel mode=0644
+
+- name: Ensure nginx log dir exists
+  file: path=/var/log/nginx/ owner=root group=wheel mode=0766 state=directory
+
+- name: Ensure sites dir exists
+  file: path=/usr/local/etc/nginx/sites/ owner=root group=wheel mode=0700 state=directory
 
 - name: Start nginx
   service: name=nginx state=started enabled=true
-
-- name: Ensure the /var/www dir exists
-  file: path=/var/www state=directory owner=www-data group=www-data mode=0755
-
-- name: Check for open port 80
-  command: /usr/sbin/ufw status verbose
-  register: ufwstatus
-  tags: security
-
-- name: Open port 80/443 if needed
-  command: /usr/sbin/ufw allow "Nginx Full"
-  tags: security
-  when: '"Nginx Full" not in ufwstatus'

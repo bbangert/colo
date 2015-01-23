@@ -2,68 +2,48 @@
 # This Playbook deploys the applications to the site
 
 - hosts: server
-  user: root
+  user: freebsd
+  sudo: yes
   tasks:
 
   # IRC packages and server setup
   - name: Install IRC client
-    apt: pkg=$item state=latest
+    pkgng: name={{item}}
     with_items:
-      - irssi
-      - irssi-plugin-otr
-      - irssi-scripts
+        - irssi
+        - irssi-otr
+        - irssi-scripts
 
-  # Check to see if we need to build ircd and install it
-  - name: Check for ircd installed
-    shell: "aptitude show ircd-hybrid | grep State"
-    register: ircdcache
+  - name: Install ircd
+    portinstall: name=ircd-hybrid
+    environment:
+        USE_OPENSSL: "yes"
+        NICKLEN: "30"
 
-  - include: buildircd.yml
-    when: "'installed' not in ircdcache.stdout"
-
-  - name: Install hybsrv package
-    apt: pkg=hybserv state=latest update_cache=yes
-
-  - name: Enable IRC/hybserv servers
-    service: name="$item" enabled=true
-    with_items:
-        - "ircd-hybrid"
-        - hybserv
+  - name: Install hybserv
+    pkgng: name=hybserv
 
   - name: Ensure key dir
-    file: path=/etc/ircd-hybrid/key/ owner=irc group=irc mode=0700 state=directory
+    file: path=/usr/local/etc/ircd-hybrid/key/ owner=ircd group=ircd mode=0700 state=directory
 
   - name: Copy keys over
     copy: >
-        src=credentials/${inventory_hostname}/ircd/${item}
-        dest=/etc/ircd-hybrid/key/${item} owner=irc group=irc mode=0600
+        src=credentials/{{inventory_hostname}}/ircd/{{item}}
+        dest=/usr/local/etc/ircd-hybrid/key/{{item}} owner=ircd group=ircd mode=0600
     with_items:
         - "rsa.key"
 
   - name: Copy pem cert over
     copy: >
-        src=credentials/${inventory_hostname}/ircd/cert.pem
-        dest=/etc/ircd-hybrid/key/cert.pem owner=irc group=irc mode=0600
-
-  - name: Copy ircd/hybserv apparmor profiles over
-    copy: >
-        src="apps/files/usr.sbin.${item}"
-        dest="/etc/apparmor.d/usr.sbin.${item}"
-        owner=root group=root mode=0644
-    with_items:
-        - hybserv
-        - "ircd-hybrid"
-    tags: security
-    notify:
-        - enforce ircd
-        - enforce hybserv
+        src=credentials/{{inventory_hostname}}/ircd/cert.pem
+        dest=/usr/local/etc/ircd-hybrid/key/cert.pem owner=ircd group=ircd mode=0600
 
   - name: Copy ircd files over
     template: >
-         src="apps/templates/ircd/${item}.j2"
-         dest="/etc/ircd-hybrid/${item}"
-         owner=irc
-         group=irc
+         src="apps/templates/ircd/{{item}}.j2"
+         dest="/usr/local/etc/ircd-hybrid/{{item}}"
+         owner=ircd
+         group=ircd
          mode=0770
     with_items:
          - ircd.conf
@@ -73,47 +53,34 @@
   - name: Copy hybserv files over
     template: >
         src="apps/templates/ircd/hybserv.conf"
-        dest="/etc/hybserv/hybserv.conf"
-        owner=irc
-        group=irc
+        dest="/usr/local/hybserv/hybserv.conf"
+        owner=hybserv
+        group=hybserv
         mode=0660
 
   - name: Copy chan/nick.db files over
     copy: >
-        src="credentials/${inventory_hostname}/ircd/${item}.db"
-        dest="/etc/hybserv/${item}.db"
-        owner=irc
-        group=irc
-        mode=0660
+        src="credentials/{{inventory_hostname}}/ircd/{{item}}.db"
+        dest="/usr/local/hybserv/{{item}}.db"
+        owner=hybserv
+        group=hybserv
+        mode=0600
     with_items:
         - nick
         - chan
     notify: restart hybserv
 
-  - name: Check for ircd ufw rule
-    shell: ufw status verbose
-    tags: security
-    register: ircdufw
-
-  - name: Enable ircd port if needed
-    shell: ufw allow 6697/tcp
-    tags: security
-    when: "'6697/tcp' not in ircdufw.stdout"
+  - name: Enable IRC/hybserv servers
+    service: name="{{item}}" enabled=true
+    with_items:
+        - "ircd-hybrid"
 
   handlers:
-  - name: enforce ircd
-    command: /usr/sbin/aa-enforce /usr/sbin/ircd-hybrid
-    notify: restart apparmor
-
-  - name: enforce hybserv
-    command: /usr/sbin/aa-enforce /usr/sbin/hybserv
-    notify: restart apparmor
-
   - name: restart ircd
     service: name="ircd-hybrid" state=restarted
 
   - name: restart hybserv
-    service: name=hybserv state=restarted
+    service: name="hybserv.sh" state=restarted
 
   - include: roles/common/handlers/main.yml
   - include: roles/dbserver/handlers/main.yml

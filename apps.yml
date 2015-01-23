@@ -2,36 +2,44 @@
 # This Playbook deploys the applications to the site
 
 - hosts: server
-  user: root
+  user: freebsd
+  sudo: yes
   tasks:
+
+  # Ensure supervisord is installed
+  - name: Install supervisor
+    pkgng: name=py27-supervisor
+
+  - name: Enable supervisord
+    service: name=supervisord enabled=yes state=started
+
+  # Ensure tools are installed
+  - name: Install app tools
+    pkgng: name=git
+
+  # Do we already have a cert.pem
+  - name: Check for ssl cert.pem
+    shell: ls -l /etc/ssl/*.pem
+    register: certpem
+
+  # Ensure the ssl.cert file is in the place python wants
+  - name: Link the ssl cert.pem to the place Python expects
+    command: ln -s /usr/local/etc/ssl/cert.pem /etc/ssl/cert.pem
+    when: "'cert.pem' not in certpem.stdout"
+
   # Groovie sites
   - name: Copy groovie nginx sites file
     template: >
         src=apps/templates/nginx.groovie
-        dest=/etc/nginx/sites-available/groovie
-        owner=root group=root mode=0644
+        dest=/usr/local/etc/nginx/sites/groovie
+        owner=root group=wheel mode=0644
     notify: restart nginx
 
   - name: Copy paste nginx sites file
     template: >
         src=apps/templates/nginx.ofcode
-        dest=/etc/nginx/sites-available/ofcode
-        owner=root group=root mode=0644
-    tags: paste
-    notify: restart nginx
-
-  - name: Link groovie config to active sites
-    file: >
-        path=/etc/nginx/sites-enabled/groovie
-        src=/etc/nginx/sites-available/groovie
-        state=link owner=root group=root
-    notify: restart nginx
-
-  - name: Link ofcode config to active sites
-    file: >
-        path=/etc/nginx/sites-enabled/ofcode
-        src=/etc/nginx/sites-available/ofcode
-        state=link owner=root group=root
+        dest=/usr/local/etc/nginx/sites/ofcode
+        owner=root group=wheel mode=0644
     tags: paste
     notify: restart nginx
 
@@ -39,15 +47,6 @@
   - name: Add pasteofcode user
     user: name=pasteofcode
     tags: paste
-
-  - name: Add pasteofcode init files
-    copy: >
-        src=apps/files/${item}.conf
-        dest=/etc/init/${item}.conf
-        owner=root group=root mode=0644
-    with_items:
-        - pasteofcode
-        - pasteofcode-web
 
   - name: Check out paste.ofcode.org into its repo
     tags: paste
@@ -63,8 +62,15 @@
 
   - name: Run the makefile
     tags: paste
-    shell: su - pasteofcode -c 'cd /home/pasteofcode/ofcode.org; make'
-    notify: restart pasteofcode
+    shell: su - pasteofcode -c 'cd /home/pasteofcode/ofcode.org; gmake'
+
+  - name: Copy supervisord config
+    copy: >
+        src=apps/files/supervisord.conf
+        dest=/usr/local/etc/supervisord.conf
+
+  - name: Ensure pasteofcode supervisord
+    supervisorctl: name=pasteofcode state=restarted config=/usr/local/etc/supervisord.conf
 
   handlers:
   - include: roles/common/handlers/main.yml

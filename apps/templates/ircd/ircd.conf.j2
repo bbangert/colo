@@ -8,8 +8,8 @@ serverinfo {
 	hub = yes;
 	max_clients = 512;
     max_nick_length = 30;
-    rsa_private_key_file = "/etc/ircd-hybrid/key/rsa.key";
-    ssl_certificate_file = "/etc/ircd-hybrid/key/cert.pem";
+    rsa_private_key_file = "/usr/local/etc/ircd-hybrid/key/rsa.key";
+    ssl_certificate_file = "/usr/local/etc/ircd-hybrid/key/cert.pem";
 };
 
 admin {
@@ -139,7 +139,7 @@ operator {
 	name = "ben";
 	user = "bbangert@127.0.0.1";
     user = "~bbangert@groovie.org";
-    password = "$PASSWORD(credentials/${inventory_hostname}/ircd/oper_pass)";
+    password = "{{ lookup('password', 'credentials/' + inventory_hostname + '/ircd/oper_pass') }}";
 	class = "opers";
 
 	/* privileges: controls the activities and commands an oper are
@@ -167,7 +167,7 @@ operator {
 operator {
     name = "pjenvey";
     user = "*pjenvey@underboss.org";
-    password = "$PASSWORD(credentials/${inventory_hostname}/ircd/phil_oper_pass)";
+    password = "{{ lookup('password', 'credentials/' + inventory_hostname + '/ircd/phil_oper_pass') }}";
     class = "opers";
     umodes = locops, servnotice, operwall, wallop;
     flags = kill, kill:remote, connect, connect:remote, kline, unkline,
@@ -179,8 +179,8 @@ operator {
 connect {
     name = "ircservices.groovie.org";
     host = "127.0.0.1";
-    send_password = "$PASSWORD(credentials/${inventory_hostname}/ircd/hyb_send_password)";
-    accept_password = "$PASSWORD(credentials/${inventory_hostname}/ircd/hyb_accept_password)";
+    send_password = "{{ lookup('password', 'credentials/' + inventory_hostname + '/ircd/hyb_send_password') }}";
+    accept_password = "{{ lookup('password', 'credentials/' + inventory_hostname + '/ircd/hyb_accept_password') }}";
 
     compressed = no;
     hub_mask = "*";

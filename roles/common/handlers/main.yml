@@ -2,14 +2,5 @@
 # Handler to handle common notifications. Handlers are called by other plays.
 # See http://ansible.cc/docs/playbooks.html for more information about handlers.
 
-- name: restart ntp
-  service: name=ntp state=restarted
-
 - name: restart sshd
   service: name=ssh state=restarted
-
-- name: restart apparmor
-  service: name=apparmor state=restarted
-
-- name: restart pasteofcode
-  service: name=pasteofcode state=restarted

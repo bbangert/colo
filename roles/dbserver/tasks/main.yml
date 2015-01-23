@@ -1,23 +1,9 @@
-- name: Setup the Postgres key
-  apt_key: url=https://www.postgresql.org/media/keys/ACCC4CF8.asc state=present
-
-- name: Setup the redis PPA
-  apt_repository: repo=ppa:rwky/redis
-
-- name: Setup the Postgres PPA
-  apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
-
-- name: Install Postgresql/Redis
-  apt: pkg=$item state=latest update_cache=yes
+- name: Install Redis
+  pkgng: name={{item}}
   with_items:
-    - postgresql
-    - redis-server
+    - redis
 
 - name: Start Databases
-  service: name=$item state=started enabled=true
+  service: name={{item}} state=started enabled=true
   with_items:
-    - postgresql
-    - redis-server
-
-- name: Start/Enable Redis
-  service: name=redis-server enabled=true
+    - redis

@@ -3,7 +3,7 @@
 # See http://ansible.cc/docs/playbooks.html for more information about handlers.
 
 - name: restart redis
-  service: name=redis-server state=restarted
+  service: name=redis state=restarted
 
 - name: restart postgres
   service: name=postgresql state=restarted

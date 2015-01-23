@@ -2,7 +2,8 @@
 # This Playbook deploys the whole application stack in this site.
 
 - hosts: server
-  user: root
+  user: freebsd
+  sudo: yes
   tasks:
   - include: roles/common/tasks/main.yml
   - include: roles/webserver/tasks/main.yml
