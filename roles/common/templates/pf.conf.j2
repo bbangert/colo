@@ -4,6 +4,8 @@
 ext_if="{{ ansible_default_ipv4.device }}"
 
 set block-policy return
+
+# don't filter on the loopback interface
 set skip on lo0
 
 scrub in all
@@ -12,7 +14,7 @@ block in all
 antispoof for $ext_if
 
 #this host may initiate anything
-pass out on $ext_if from any to any
+pass out on $ext_if proto { tcp, udp, icmp } from any to any modulate state
 
 pass in on $ext_if proto icmp all
 pass in on $ext_if proto icmp6 all
