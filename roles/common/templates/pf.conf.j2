@@ -1,0 +1,29 @@
+#{{ ansible_managed }}
+#$Id: pf.conf.j2,v 1.2 2015/01/23 16:10:54 Exp $
+
+ext_if="{{ ansible_default_ipv4.device }}"
+
+set block-policy return
+set skip on lo0
+
+scrub in all
+block in all
+
+antispoof for $ext_if
+
+#this host may initiate anything
+pass out on $ext_if from any to any
+
+pass in on $ext_if proto icmp all
+pass in on $ext_if proto icmp6 all
+
+martians = "{ 127.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12, \
+          10.0.0.0/8, 169.254.0.0/16, 192.0.2.0/24, \
+          0.0.0.0/8, 240.0.0.0/4 }"
+
+block drop in quick on $ext_if from $martians to any
+block drop out quick on $ext_if from any to $martians
+
+# Services to allow in
+tcp_services = "{ ssh, http, https, 6697 }"
+pass in on $ext_if proto tcp from any to any port $tcp_services

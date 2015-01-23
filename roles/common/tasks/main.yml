@@ -10,7 +10,21 @@
     - vim
     - traceroute
     - htop
+    - bash
+    - bash-completion
 
 - name: Update sshd config to use key auth only
   copy: src=sshd_config dest=/etc/ssh/sshd_config owner=root group=wheel mode=0644
   notify: restart sshd
+
+- name: configure firewall
+  template: src=pf.conf.j2
+    dest=/etc/pf.conf owner=0 group=0 mode=0444
+    validate='/sbin/pfctl -nf %s'
+  tags: firewall
+  notify:
+    - reload pf
+
+- name: enable pf firewall
+  service: name=pf state=started enabled=yes
+  tags: firewall

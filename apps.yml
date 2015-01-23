@@ -70,7 +70,7 @@
         dest=/usr/local/etc/supervisord.conf
 
   - name: Ensure pasteofcode supervisord
-    supervisorctl: name=pasteofcode state=restarted config=/usr/local/etc/supervisord.conf
+    supervisorctl: name=pasteofcode state=restarted config=/usr/local/etc/supervisord.conf enabled=yes
 
   handlers:
   - include: roles/common/handlers/main.yml
