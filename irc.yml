@@ -8,11 +8,10 @@
 
   # IRC packages and server setup
   - name: Install IRC client
-    pkgng: name={{item}}
-    with_items:
-        - irssi
-        - irssi-otr
-        - irssi-scripts
+    portinstall: name=irssi
+    environment:
+        PORT_OPTIONS: "PERL PROXY IPV6 DOCS"
+    tags: irssi
 
   - name: Install ircd
     portinstall: name=ircd-hybrid
